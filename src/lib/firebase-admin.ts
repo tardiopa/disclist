@@ -1,14 +1,13 @@
-import { initializeApp, getApps, cert } from 'firebase-admin/app'
+import { initializeApp, getApps, getApp, cert } from 'firebase-admin/app'
 import { getAuth } from 'firebase-admin/auth'
 import { getFirestore } from 'firebase-admin/firestore'
 
-function initAdmin() {
-    if (getApps().length > 0) return
+function getAdminApp() {
+    if (getApps().length > 0) return getApp()
 
     const serviceAccount = process.env.FIREBASE_SERVICE_ACCOUNT
     if (serviceAccount) {
-        initializeApp({ credential: cert(JSON.parse(serviceAccount)) })
-        return
+        return initializeApp({ credential: cert(JSON.parse(serviceAccount)) })
     }
 
     if (process.env.NODE_ENV === 'production') {
@@ -16,10 +15,13 @@ function initAdmin() {
     }
 
     // Local dev only: use application default credentials
-    initializeApp({ projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID })
+    return initializeApp({ projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID })
 }
 
-initAdmin()
+export const adminAuth = {
+    verifyIdToken: (token: string) => getAuth(getAdminApp()).verifyIdToken(token),
+}
 
-export const adminAuth = getAuth()
-export const adminDb = getFirestore()
+export const adminDb = {
+    collection: (name: string) => getFirestore(getAdminApp()).collection(name),
+}
