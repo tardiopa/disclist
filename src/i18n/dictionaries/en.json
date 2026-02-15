@@ -1,0 +1,112 @@
+{
+  "loading": "Loading...",
+  "language": "Language",
+  "signIn": "Sign in",
+  "signOut": "Sign out",
+  "hello": "Hello",
+  "cancel": "Cancel",
+  "save": "Save",
+  "create": "Create",
+  "delete": "Delete",
+  "discard": "Discard",
+  "done": "Done",
+  "send": "Send",
+
+  "dashboard": {
+    "welcome": "Welcome to Disclist!",
+    "welcomeSubtitle": "Create your first wishlist to start tracking vinyl records.",
+    "createWishlist": "Create Wishlist",
+    "findVinyl": "Add a Vinyl",
+    "searchPlaceholder": "Search by artist or album...",
+    "searching": "Searching...",
+    "noResults": "No results found",
+    "added": "Added",
+    "add": "Add",
+    "adding": "Adding...",
+    "guestBannerTitle": "Create an account to save your wishlist",
+    "guestBannerText": "Your wishlist is temporary. Sign in to keep it forever and access it from any device.",
+    "share": "Share",
+    "refreshPrices": "Refresh Retail Prices",
+    "refreshingPrices": "Loading...",
+    "emptyWishlist": "Your wishlist is empty. Start searching above!",
+    "cover": "Cover",
+    "albumDetails": "Album Details",
+    "used": "Used",
+    "new": "New"
+  },
+
+  "sidebar": {
+    "myWishlists": "My Wishlists",
+    "new": "New",
+    "noWishlists": "No wishlists yet",
+    "public": "Public",
+    "private": "Private"
+  },
+
+  "prices": {
+    "from": "From",
+    "avg": "Avg",
+    "forSale": "for sale",
+    "veryRare": "Very Rare",
+    "rare": "Rare",
+    "common": "Common"
+  },
+
+  "login": {
+    "subtitle": "Sign in to manage your vinyl wishlist",
+    "signInWithGoogle": "Sign in with Google"
+  },
+
+  "publicView": {
+    "loading": "Unpacking the vinyls...",
+    "notFound": "Wishlist not found",
+    "private": "This wishlist is private",
+    "errorMessage": "The link might be broken or the owner made this list private.",
+    "goHome": "Go to Homepage",
+    "ctaText": "Start your own vinyl wishlist",
+    "ctaButton": "Create My Disclist"
+  },
+
+  "newWishlist": {
+    "title": "Create New Wishlist",
+    "description": "Give your wishlist a name to organize your vinyl collection.",
+    "label": "Wishlist Name",
+    "placeholder": "e.g., Jazz Classics, Wishlist 2025..."
+  },
+
+  "editWishlist": {
+    "title": "Edit Wishlist Name",
+    "description": "Rename your wishlist to keep things organized.",
+    "label": "Wishlist Name",
+    "placeholder": "Wishlist name"
+  },
+
+  "deleteWishlist": {
+    "title": "Delete \"{name}\"?",
+    "description": "This will permanently delete this wishlist and all its items. This action cannot be undone."
+  },
+
+  "migration": {
+    "checking": "Checking your wishlist...",
+    "title": "Save your wishlist?",
+    "description": "You have {count} {item} in your temporary wishlist. Save it to your account?",
+    "vinyl": "vinyl",
+    "vinyls": "vinyls",
+    "label": "Wishlist Name",
+    "placeholder": "My wishlist",
+    "saveWishlist": "Save Wishlist"
+  },
+
+  "share": {
+    "title": "Share Wishlist",
+    "description": "Make your wishlist public to share it with friends.",
+    "publicAccess": "Public Access",
+    "publicOn": "Anyone with the link can view.",
+    "publicOff": "Only you can access this list.",
+    "shareLink": "Share Link",
+    "sendByEmail": "Send link by email",
+    "emailPlaceholder": "friend@example.com",
+    "invitationSent": "Invitation sent!",
+    "invitationError": "Failed to send invitation. Please try again."
+  }
+}
