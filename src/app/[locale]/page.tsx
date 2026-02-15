@@ -189,6 +189,7 @@ export default function Dashboard() {
     if (wishlist) {
       setEditingWishlist(wishlist)
       setShowEditModal(true)
+      setMobileOpen(false)
     }
   }
 
@@ -208,6 +209,7 @@ export default function Dashboard() {
     if (wishlist) {
       setDeletingWishlist(wishlist)
       setShowDeleteDialog(true)
+      setMobileOpen(false)
     }
   }
 
@@ -335,7 +337,7 @@ export default function Dashboard() {
           wishlists={wishlists}
           currentWishlistId={currentWishlistId}
           onSelectWishlist={setCurrentWishlistId}
-          onNewWishlist={() => setShowNewWishlistModal(true)}
+          onNewWishlist={() => { setShowNewWishlistModal(true); setMobileOpen(false) }}
           onEditWishlist={handleEditWishlist}
           onDeleteWishlist={handleDeleteWishlist}
           onSignIn={signInWithGoogle}
@@ -560,7 +562,7 @@ export default function Dashboard() {
                         variant="outline"
                         size="sm"
                         className="h-8 text-slate-900 hover:bg-slate-50 gap-2"
-                        onClick={() => setShowShareModal(true)}
+                        onClick={() => { setShowShareModal(true); setMobileOpen(false) }}
                       >
                         <Share className="h-4 w-4" />
                         {dict.dashboard.share}
@@ -593,7 +595,7 @@ export default function Dashboard() {
                           <TableHead className="w-[80px]">{dict.dashboard.cover}</TableHead>
                           <TableHead>{dict.dashboard.albumDetails}</TableHead>
                           <TableHead>{dict.dashboard.used}</TableHead>
-                          <TableHead>{dict.dashboard.new}</TableHead>
+                          <TableHead className="min-w-[170px]">{dict.dashboard.new}</TableHead>
                           <TableHead className="w-[50px]"></TableHead>
                         </TableRow>
                       </TableHeader>
@@ -768,7 +770,7 @@ function NewPriceDisplay({ item }: { item: WishlistItem }) {
 
   return (
     <div className="space-y-1.5">
-      <div className="flex items-center gap-2 flex-wrap">
+      <div className="flex items-center gap-2 flex-nowrap">
         {item.culturaPrice ? (
           <>
             <span className="text-sm font-semibold text-slate-900">
