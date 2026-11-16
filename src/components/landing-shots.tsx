@@ -190,23 +190,26 @@ export function DashboardShot() {
   return (
     <Frame className="px-5 pt-5 pb-6 sm:px-6">
       <p className="text-[22px] leading-none font-semibold tracking-[-0.03em]">{t("dashboard")}</p>
-      <div className="mt-5 flex items-end justify-between border-y border-line py-4">
+      <div className="mt-5 flex items-end justify-between border-y border-line py-6">
         <div>
           <p className="label">{t("inCollectionCount")}</p>
           <p className="num mt-2 text-[34px] leading-none font-medium tracking-[-0.04em]">{count(demo.count)}</p>
         </div>
-        <div className="flex h-14 items-end gap-1.5">
+        {/* Heights in pixels: percentage heights inside a flex row are unreliable across browsers. */}
+        <div className="flex items-end gap-1.5">
           {demo.decades.map((d) => (
-            <span key={d.decade} className="flex w-5 flex-col items-center justify-end gap-1 self-stretch">
-              <span className="w-full rounded-t-[3px] bg-ink" style={{ height: `${(d.count / decadeMax) * 100}%`, minHeight: d.count ? 2 : 0 }} />
-            </span>
+            <span
+              key={d.decade}
+              className="block w-5 rounded-t-[3px] bg-ink"
+              style={{ height: d.count ? Math.max(3, Math.round((d.count / decadeMax) * 56)) : 0 }}
+            />
           ))}
         </div>
       </div>
       <p className="label mt-5">{t("topGenres")}</p>
       <div className="mt-3 space-y-2.5">
         {demo.genres.map((g) => (
-          <div key={g.name} className="grid grid-cols-[6.5rem_1fr_1.5rem] items-center gap-3 text-[13px]">
+          <div key={g.name} className="grid items-center gap-3 text-[13px]" style={{ gridTemplateColumns: "6.5rem minmax(0, 1fr) 1.5rem" }}>
             <span className="truncate">{g.name}</span>
             <span className="h-1.5">
               <span className="block h-full rounded-r-[3px] bg-ink" style={{ width: `${(g.count / max) * 100}%` }} />
