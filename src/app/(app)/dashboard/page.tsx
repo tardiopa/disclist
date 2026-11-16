@@ -47,9 +47,9 @@ export default function DashboardPage() {
         ))}
       </dl>
 
-      <div className="grid gap-x-16 gap-y-14 pt-12 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-x-16 gap-y-14 pt-12 lg:grid-cols-2">
         {s.top.length > 0 && (
-          <section className="lg:col-span-2">
+          <section className="min-w-0 lg:col-span-2">
             <h2 className="label">{t("mostValuable")}</h2>
             <ol className="mt-4 border-t border-line">
               {s.top.map((item, n) => (
@@ -83,11 +83,11 @@ export default function DashboardPage() {
         ).map(
           ([heading, rows]) =>
             rows.length > 0 && (
-              <section key={heading}>
+              <section key={heading} className="min-w-0">
                 <h2 className="label">{heading}</h2>
                 <ul className="mt-5 space-y-3.5">
                   {rows.map((g) => (
-                    <li key={g.name} className="grid grid-cols-[minmax(0,10rem)_1fr_2.5rem] items-center gap-4" title={`${g.name}: ${g.count}`}>
+                    <li key={g.name} className="grid grid-cols-[minmax(0,7rem)_minmax(0,1fr)_2rem] items-center gap-3 sm:grid-cols-[minmax(0,10rem)_minmax(0,1fr)_2.5rem] sm:gap-4" title={`${g.name}: ${g.count}`}>
                       <span className="truncate text-[14px]">{g.name}</span>
                       <span className="h-2">
                         <span className="block h-full min-w-1 rounded-r-[4px] bg-ink" style={{ width: `${(g.count / rows[0].count) * 100}%` }} />
@@ -101,7 +101,7 @@ export default function DashboardPage() {
         )}
 
         {s.decades.length > 0 && (
-          <section className="lg:col-span-2">
+          <section className="min-w-0 lg:col-span-2">
             <h2 className="label">{t("decades")}</h2>
             <ol className="mt-5 flex h-56 items-stretch gap-[6px] border-b border-line">
               {s.decades.map((d) => (

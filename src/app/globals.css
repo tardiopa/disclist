@@ -220,21 +220,17 @@ button:disabled {
   transition: transform 0.6s cubic-bezier(0.2, 0.75, 0.2, 1);
 }
 
-/* Grid tile: on hover the sleeve lifts off the shelf, above its neighbours.
-   The record itself only comes out in the detail view. */
+/* Grid tile: on hover the sleeve lifts off the shelf. The record itself only
+   comes out in the detail view. */
 .tile {
   position: relative;
-  z-index: 0;
-  /* Eases back to 0 while the sleeve settles, so a tile on its way down is
-     always below the one being hovered right now. */
-  transition: z-index 0.5s linear;
 }
 
 @media (hover: hover) {
+  /* Just enough to sit above its neighbours, never above the sticky bars. */
   .tile:hover,
   .tile:focus-visible {
-    z-index: 20;
-    transition-duration: 0s;
+    z-index: 1;
   }
   .tile:hover .sleeve,
   .tile:focus-visible .sleeve {

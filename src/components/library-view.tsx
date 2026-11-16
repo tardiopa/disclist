@@ -136,9 +136,11 @@ export function LibraryView({ list, items, title, onOpen, onRemove, empty, actio
 
           {/* Sorting is not a filter: set apart, labelled, and styled differently. */}
           <span className="mx-1 hidden h-5 w-px bg-line sm:block" />
+          {/* Phones: sorting and the view switch get their own line, so the filters keep their full labels. */}
+          <div className="flex basis-full items-center justify-between sm:basis-auto sm:justify-start">
           <label className="relative flex h-9 items-center gap-1.5 text-[13px] text-muted hover:text-ink">
             <ArrowUpDown size={14} className="shrink-0" />
-            <span className="hidden lg:inline">{t("sort")}</span>
+            <span className="sm:hidden lg:inline">{t("sort")}</span>
             <span className="text-ink">{sorts.find(([v]) => v === filters.sort)?.[1]}</span>
             <ChevronDown size={13} />
             <select
@@ -156,7 +158,7 @@ export function LibraryView({ list, items, title, onOpen, onRemove, empty, actio
           </label>
 
           {!isWishlist && (
-            <div className="ml-auto flex h-9 items-center rounded-full border border-line p-0.5 sm:ml-2">
+            <div className="flex h-9 items-center rounded-full border border-line p-0.5 sm:ml-3">
               {(["grid", "list"] as const).map((v) => (
                 <button
                   key={v}
@@ -171,6 +173,7 @@ export function LibraryView({ list, items, title, onOpen, onRemove, empty, actio
               ))}
             </div>
           )}
+          </div>
         </div>
       )}
 
