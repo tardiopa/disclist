@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { cleanName, joinArtists, fromBasicInfo, fromSearchResult, plainProfile, isVinyl } from "./normalize.ts";
 import { aggregate, pickSample, rarity } from "./stats.ts";
-import { planCollectionImport, planWishlistImport } from "./merge.ts";
+import { mergeWishlist, planCollectionImport, planWishlistImport } from "./merge.ts";
 import type { Edition, Item, NewItem } from "./types.ts";
 
 const ed = (id: number, have: number): Edition => ({
@@ -130,4 +130,29 @@ test("dashboard summary", () => {
   assert.deepEqual(s.genres, [{ name: "Rock", count: 2 }, { name: "Electronic", count: 1 }]);
   assert.deepEqual(s.artists, [{ name: "A", count: 3 }]);
   assert.deepEqual(s.decades.map((d) => `${d.decade}:${d.count}`), ["1960:1", "1970:0", "1980:0", "1990:1"]);
+});
+
+test("master-less pressings fold into their album on the wishlist", () => {
+  const loose = (id: number, over: Partial<Item> = {}) =>
+    item({ id: `r${id}`, key: `r${id}`, masterId: null, releaseId: id, title: "Wonderer", artist: "Sunbeam Sound Machine", ...over });
+  // display: same artist + title → one row; the master entry wins, accents/case ignored
+  const shown = mergeWishlist([
+    loose(1, { addedAt: 5 }),
+    loose(2, { addedAt: 1 }),
+    item({ id: "m9", key: "m9", masterId: 9, title: "Wonderer", artist: "Sunbeam Sound Machine", addedAt: 9 }),
+    loose(3, { title: "Other", addedAt: 2 }),
+    loose(4, { title: "OTHER", addedAt: 3 }),
+    item({ id: "m7", key: "m7", masterId: 7, title: "Other", artist: "Someone Else" }),
+  ]);
+  assert.deepEqual(shown.map((i) => i.id), ["m9", "r3", "m7"]);
+  // two different masters with the same name are both kept
+  assert.equal(mergeWishlist([item({ id: "a", key: "m1" }), item({ id: "b", key: "m2", masterId: 2 })]).length, 2);
+
+  // import: skip a master-less pressing whose album is already there or arrives in the same batch
+  const { id: _a, ...l1 } = loose(1);
+  const { id: _b, ...l2 } = loose(2);
+  const { id: _c, ...l5 } = loose(5, { title: "Brand New" });
+  const out = planWishlistImport([item({ id: "m9", key: "m9", masterId: 9, title: "Wonderer", artist: "Sunbeam Sound Machine" })], [l1, l2, l5]);
+  assert.deepEqual(out.map((o) => o.id), ["r5"]);
+  assert.deepEqual(planWishlistImport([], [l1, l2]).map((o) => o.id), ["r1"]);
 });

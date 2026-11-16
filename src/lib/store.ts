@@ -19,7 +19,7 @@ import {
 } from "firebase/firestore";
 import type { User } from "firebase/auth";
 import { db } from "./firebase";
-import type { CollectionPlan } from "./merge";
+import { mergeWishlist, type CollectionPlan } from "./merge";
 import type { DiscogsLink, Item, ListName, NewItem, Profile } from "./types";
 
 const userRef = (uid: string) => doc(db, "users", uid);
@@ -151,5 +151,5 @@ export async function loadShared(shareId: string): Promise<Shared | null> {
     read("collection", profile.collectionPublic),
     read("wishlist", profile.wishlistPublic),
   ]);
-  return { profile, collection: col, wishlist: wish };
+  return { profile, collection: col, wishlist: wish && mergeWishlist(wish) };
 }

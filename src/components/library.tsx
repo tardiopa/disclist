@@ -3,6 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useAuth } from "./auth";
 import * as discogs from "@/lib/discogs";
+import { mergeWishlist } from "@/lib/merge";
 import * as store from "@/lib/store";
 import type { AlbumDetail, DiscogsLink, Item, ListName, NewItem, Profile, Stats } from "@/lib/types";
 
@@ -63,7 +64,7 @@ export function LibraryProvider({ children }: { children: ReactNode }) {
         setLoaded((l) => ({ ...l, collection: true }));
       }),
       store.watchList(uid, "wishlist", (items) => {
-        setWishlist(items);
+        setWishlist(mergeWishlist(items));
         setLoaded((l) => ({ ...l, wishlist: true }));
       }),
     ];
