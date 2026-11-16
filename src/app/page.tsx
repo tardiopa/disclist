@@ -28,8 +28,10 @@ export default function Landing() {
   ];
 
   return (
-    <div className="mx-auto max-w-[1300px] px-5 sm:px-8">
-      <header className="flex h-16 items-center justify-between">
+    <>
+    {/* Always in view, so signing in is one click away from anywhere on the page. */}
+    <header className="sticky top-0 z-30 bg-bg">
+      <div className="mx-auto flex h-16 max-w-[1300px] items-center justify-between px-5 sm:px-8">
         <Link href="/" className="text-[19px]">
           <Logo />
         </Link>
@@ -41,10 +43,12 @@ export default function Landing() {
             {top.label}
           </Link>
         </div>
-      </header>
+      </div>
+    </header>
+    <div className="mx-auto max-w-[1300px] px-5 sm:px-8">
 
       <section className="pt-14 pb-14 sm:pt-24 sm:pb-20">
-        <h1 className="max-w-[16ch] text-[44px] leading-[0.98] font-semibold tracking-[-0.045em] text-balance sm:text-[76px] lg:text-[92px]">
+        <h1 className="text-[44px] leading-[0.98] font-semibold tracking-[-0.045em] whitespace-pre-line sm:text-[76px] lg:text-[92px]">
           {t("heroTitle")}
         </h1>
         <p className="mt-7 max-w-md text-lg text-muted sm:text-xl">{t("heroSub")}</p>
@@ -89,8 +93,14 @@ export default function Landing() {
 
       <footer className="label flex items-center justify-between border-t border-line py-8">
         <span>Disclist</span>
-        <span>{t("poweredBy")}</span>
+        <span>
+          {t("poweredBy")}{" "}
+          <a href="https://www.linkedin.com/in/patrice-tardio-57101198" target="_blank" rel="noreferrer" className="text-ink underline-offset-4 hover:underline">
+            Patrice Tardio
+          </a>
+        </span>
       </footer>
     </div>
+    </>
   );
 }

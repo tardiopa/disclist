@@ -124,7 +124,7 @@ export function WishlistShot() {
       <div className="label mt-5 flex items-center gap-3 border-b border-line pb-2.5">
         <span className="w-10" />
         <span className="flex-1">{t("album")}</span>
-        <span className="w-24 text-right">{t("average")}</span>
+        <span className="w-24 text-right">{t("s1Title")}</span>
         <span className="hidden w-24 sm:block">{t("rarity")}</span>
         <span className="w-4" />
       </div>
@@ -185,18 +185,17 @@ export function ShareShot() {
 /* ---------- small visuals for the secondary promises ---------- */
 
 export function PriceMini() {
-  const { t, money } = useI18n();
+  const { money } = useI18n();
   const w = demo.wish[3] ?? demo.wish[0];
+  // An album and what it is worth: no "price" wording that could read as Disclist's own pricing.
   return (
-    <div aria-hidden className="flex items-end gap-6">
-      <div>
-        <p className="label">{t("average")}</p>
-        <p className="num mt-1.5 text-[34px] leading-none font-medium tracking-[-0.04em]">{money(w.avg)}</p>
-      </div>
-      <div>
-        <p className="label">{t("lowest")}</p>
-        <p className="num mt-1.5 text-[22px] leading-none tracking-[-0.04em] text-muted">{money(w.min)}</p>
-      </div>
+    <div aria-hidden className="flex w-full max-w-xs items-center gap-3">
+      <Cover src={w.img} className="w-12 shrink-0 shadow-none" />
+      <span className="min-w-0 flex-1">
+        <span className="block truncate text-[14px] font-medium">{w.title}</span>
+        <span className="block truncate text-[12.5px] text-muted">{w.artist}</span>
+      </span>
+      <span className="num text-[26px] leading-none font-medium tracking-[-0.04em]">{money(w.avg)}</span>
     </div>
   );
 }
