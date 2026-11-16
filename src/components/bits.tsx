@@ -9,8 +9,8 @@ import type { Stats } from "@/lib/types";
 export function Logo({ className = "" }: { className?: string }) {
   return (
     <span className={`inline-flex items-center gap-2 font-semibold tracking-tight ${className}`}>
-      <svg viewBox="0 0 20 20" className="h-[1.05em] w-[1.05em]" aria-hidden>
-        <circle cx="10" cy="10" r="10" fill="currentColor" />
+      <svg viewBox="0 0 20 20" className="h-[1.05em] w-[1.05em] shrink-0 overflow-visible" aria-hidden>
+        <circle cx="10" cy="10" r="9.5" fill="currentColor" />
         <circle cx="10" cy="10" r="3.6" fill="var(--accent)" />
         <circle cx="10" cy="10" r="0.9" fill="var(--bg)" />
       </svg>
