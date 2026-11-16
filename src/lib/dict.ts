@@ -145,6 +145,12 @@ export const en = {
   s3Title: "Dashboard",
   s3Text: "Your collection's value, genres, artists and decades at a glance.",
   ctaTitle: "Your collection is waiting.",
+  d1Title: "Genres and artists",
+  d1Text: "What your collection is made of.",
+  d2Title: "Most valuable",
+  d2Text: "The records worth the most in your collection.",
+  d3Title: "Decades",
+  d3Text: "Your collection, era by era.",
 } as const;
 
 export type Key = keyof typeof en;
@@ -291,6 +297,12 @@ export const fr: Record<Key, string> = {
   s3Title: "Tableau de bord",
   s3Text: "La valeur de votre collection, vos genres, vos artistes et vos décennies, en un coup d'œil.",
   ctaTitle: "Votre collection vous attend.",
+  d1Title: "Genres et artistes",
+  d1Text: "Ce qui domine votre collection.",
+  d2Title: "Les plus cotés",
+  d2Text: "Les vinyles qui valent le plus dans votre collection.",
+  d3Title: "Décennies",
+  d3Text: "Votre collection, époque par époque.",
 };
 
 export type Lang = "en" | "fr";

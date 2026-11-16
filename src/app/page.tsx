@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { useAuth } from "@/components/auth";
 import { Logo } from "@/components/bits";
-import { CollectionShot, DashboardShot, DiscogsShot, ShareShot, WishlistShot } from "@/components/landing-shots";
+import { CollectionShot, DecadesMini, DiscogsShot, GenresMini, ShareShot, TopMini, WishlistShot } from "@/components/landing-shots";
 import { useI18n } from "@/lib/i18n";
 
 /** Fades its content up the first time it scrolls into view. */
@@ -47,7 +47,11 @@ export default function Landing() {
     { title: t("v1Title"), text: t("v1Text"), shot: <DiscogsShot /> },
     { title: t("v2Title"), text: t("v2Text"), shot: <WishlistShot /> },
     { title: t("v3Title"), text: t("v3Text"), shot: <ShareShot /> },
-    { title: t("s3Title"), text: t("s3Text"), shot: <DashboardShot /> },
+  ];
+  const dashboard: { title: string; text: string; visual: ReactNode }[] = [
+    { title: t("d1Title"), text: t("d1Text"), visual: <GenresMini /> },
+    { title: t("d2Title"), text: t("d2Text"), visual: <TopMini /> },
+    { title: t("d3Title"), text: t("d3Text"), visual: <DecadesMini /> },
   ];
   return (
     <>
@@ -99,28 +103,43 @@ export default function Landing() {
         ))}
       </section>
 
+      {/* 04 — the dashboard, told through three of its figures */}
+      <section className="mt-24 sm:mt-36">
+        <Reveal>
+          <p className="label">04</p>
+          <h2 className="mt-4 text-[32px] leading-[1.05] font-semibold tracking-[-0.035em] sm:text-[44px]">{t("s3Title")}</h2>
+        </Reveal>
+        <div className="mt-10 grid border-t border-line md:grid-cols-3">
+          {dashboard.map((d, n) => (
+            <Reveal key={d.title} delay={n * 140} className={`flex flex-col border-b border-line py-9 md:border-b-0 md:py-11 ${n ? "md:border-l md:pl-8" : ""} md:pr-8`}>
+              <div className="flex h-36 items-end">{d.visual}</div>
+              <h3 className="mt-8 text-xl font-medium tracking-tight">{d.title}</h3>
+              <p className="mt-2 text-muted">{d.text}</p>
+            </Reveal>
+          ))}
+        </div>
+      </section>
+
+      <section className="border-t border-line py-24 text-center sm:py-36">
+        <Reveal>
+          <h2 className="mx-auto max-w-[14ch] text-[40px] leading-none font-semibold tracking-[-0.04em] text-balance sm:text-[68px]">{t("ctaTitle")}</h2>
+          <Link href={cta.href} className={`btn btn-primary mt-10 h-12 px-6 text-[15px] ${ready ? "" : "invisible"}`}>
+            {cta.label}
+            <ArrowRight size={17} />
+          </Link>
+        </Reveal>
+      </section>
+
+      <footer className="label flex items-center justify-between border-t border-line py-8">
+        <span>Disclist</span>
+        <span>
+          {t("poweredBy")}{" "}
+          <a href="https://www.linkedin.com/in/patrice-tardio-57101198" target="_blank" rel="noreferrer" className="text-ink underline-offset-4 hover:underline">
+            Patrice Tardio
+          </a>
+        </span>
+      </footer>
     </div>
-
-    {/* Closing band in the opposite theme of the page. */}
-    <section className="flip mt-24 px-5 py-28 text-center sm:mt-36 sm:py-40">
-      <Reveal>
-        <h2 className="mx-auto max-w-[14ch] text-[40px] leading-none font-semibold tracking-[-0.04em] text-balance sm:text-[68px]">{t("ctaTitle")}</h2>
-        <Link href={cta.href} className={`btn btn-primary mt-10 h-12 px-6 text-[15px] ${ready ? "" : "invisible"}`}>
-          {cta.label}
-          <ArrowRight size={17} />
-        </Link>
-      </Reveal>
-    </section>
-
-    <footer className="label mx-auto flex max-w-[1300px] items-center justify-between px-5 py-8 sm:px-8">
-      <span>Disclist</span>
-      <span>
-        {t("poweredBy")}{" "}
-        <a href="https://www.linkedin.com/in/patrice-tardio-57101198" target="_blank" rel="noreferrer" className="text-ink underline-offset-4 hover:underline">
-          Patrice Tardio
-        </a>
-      </span>
-    </footer>
     </>
   );
 }

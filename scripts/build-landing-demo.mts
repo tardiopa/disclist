@@ -27,8 +27,11 @@ const grid = [];
 for (const [n, item] of collection.slice(0, GRID).entries()) {
   const al = await d.album(item, token);
   await save(al.cover || item.cover, `c${n}.jpg`);
-  grid.push({ title: al.title, artist: al.artist, year: al.year, img: `/landing/c${n}.jpg` });
+  const st = await d.stats(al, d.SAMPLE_QUICK, token, "high");
+  grid.push({ title: al.title, artist: al.artist, year: al.year, img: `/landing/c${n}.jpg`, avg: st.avg });
 }
+// The three most valuable among them, for the dashboard preview.
+const top = [...grid].filter((g) => g.avg != null).sort((a, b) => b.avg! - a.avg!).slice(0, 3);
 
 const wish = [];
 for (const [n, item] of wantlist.slice(0, WISH).entries()) {
@@ -41,6 +44,6 @@ for (const [n, item] of wantlist.slice(0, WISH).entries()) {
 const sum = summarize(collection.map((c, n) => ({ ...c, id: String(n) })), []);
 writeFileSync(
   "src/lib/demo.json",
-  JSON.stringify({ count: collection.length, grid, wish, genres: sum.genres.slice(0, 5), decades: sum.decades }, null, 2) + "\n",
+  JSON.stringify({ count: collection.length, grid, top, wish, genres: sum.genres.slice(0, 5), artists: sum.artists.slice(0, 5), decades: sum.decades }, null, 2) + "\n",
 );
 console.log("grid", grid.length, "wish", wish.length);

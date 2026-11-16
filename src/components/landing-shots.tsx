@@ -182,42 +182,58 @@ export function ShareShot() {
   );
 }
 
-/** The dashboard: how big the collection is and what it is made of. */
-export function DashboardShot() {
-  const { t, count } = useI18n();
+/* ---------- dashboard: three small visuals ---------- */
+
+export function GenresMini() {
   const max = demo.genres[0]?.count ?? 1;
-  const decadeMax = Math.max(1, ...demo.decades.map((d) => d.count));
   return (
-    <Frame className="px-5 pt-5 pb-6 sm:px-6">
-      <p className="text-[22px] leading-none font-semibold tracking-[-0.03em]">{t("dashboard")}</p>
-      <div className="mt-5 flex items-end justify-between border-y border-line py-6">
-        <div>
-          <p className="label">{t("inCollectionCount")}</p>
-          <p className="num mt-2 text-[34px] leading-none font-medium tracking-[-0.04em]">{count(demo.count)}</p>
+    <div aria-hidden className="w-full max-w-xs space-y-2.5">
+      {demo.genres.slice(0, 4).map((g) => (
+        <div key={g.name} className="grid items-center gap-3 text-[13px]" style={{ gridTemplateColumns: "6rem minmax(0, 1fr) 1.5rem" }}>
+          <span className="truncate">{g.name}</span>
+          <span className="block h-1.5">
+            <span className="block h-full rounded-r-[3px] bg-ink" style={{ width: `${(g.count / max) * 100}%` }} />
+          </span>
+          <span className="num text-right text-[12px] text-muted">{g.count}</span>
         </div>
-        {/* Heights in pixels: percentage heights inside a flex row are unreliable across browsers. */}
-        <div className="flex items-end gap-1.5">
-          {demo.decades.map((d) => (
-            <span
-              key={d.decade}
-              className="block w-5 rounded-t-[3px] bg-ink"
-              style={{ height: d.count ? Math.max(3, Math.round((d.count / decadeMax) * 56)) : 0 }}
-            />
-          ))}
+      ))}
+    </div>
+  );
+}
+
+export function TopMini() {
+  const { money } = useI18n();
+  return (
+    <div aria-hidden className="w-full max-w-xs">
+      {demo.top.map((a, n) => (
+        <div key={a.img} className="flex items-center gap-3 border-b border-line py-2 last:border-0">
+          <span className="num w-3 text-[11.5px] text-faint">{n + 1}</span>
+          <Cover src={a.img} className="w-9 shrink-0 shadow-none" />
+          <span className="min-w-0 flex-1 truncate text-[13.5px] font-medium">{a.title}</span>
+          <span className="num text-[14px]">{money(a.avg)}</span>
         </div>
-      </div>
-      <p className="label mt-5">{t("topGenres")}</p>
-      <div className="mt-3 space-y-2.5">
-        {demo.genres.map((g) => (
-          <div key={g.name} className="grid items-center gap-3 text-[13px]" style={{ gridTemplateColumns: "6.5rem minmax(0, 1fr) 1.5rem" }}>
-            <span className="truncate">{g.name}</span>
-            <span className="h-1.5">
-              <span className="block h-full rounded-r-[3px] bg-ink" style={{ width: `${(g.count / max) * 100}%` }} />
-            </span>
-            <span className="num text-right text-[12px] text-muted">{g.count}</span>
-          </div>
+      ))}
+    </div>
+  );
+}
+
+export function DecadesMini() {
+  const max = Math.max(1, ...demo.decades.map((d) => d.count));
+  return (
+    <div aria-hidden className="w-full max-w-xs">
+      {/* Heights in pixels: percentage heights inside a flex row are unreliable across browsers. */}
+      <div className="flex items-end gap-2 border-b border-line">
+        {demo.decades.map((d) => (
+          <span key={d.decade} className="block flex-1 rounded-t-[3px] bg-ink" style={{ height: d.count ? Math.max(3, Math.round((d.count / max) * 84)) : 0 }} />
         ))}
       </div>
-    </Frame>
+      <div className="mt-2 flex gap-2">
+        {demo.decades.map((d) => (
+          <span key={d.decade} className="num flex-1 text-center text-[10.5px] text-muted">
+            {String(d.decade).slice(2)}s
+          </span>
+        ))}
+      </div>
+    </div>
   );
 }
