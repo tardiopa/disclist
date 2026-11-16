@@ -161,7 +161,7 @@ export function Detail({ target, onClose, morphed }: { target: DetailTarget; onC
           </div>
         </div>
 
-        <div className="anim-rise-late min-w-0">
+        <div className={`min-w-0 ${morphed ? "" : "anim-rise-late"}`}>
           <p className="label">{[year, ...genres].filter(Boolean).join(" · ")}</p>
           <h1 className="mt-3 text-[34px] leading-[1.02] font-semibold tracking-[-0.035em] text-balance sm:text-[46px]">{title}</h1>
           <p className="mt-2 text-xl text-muted sm:text-2xl">{artistName}</p>
