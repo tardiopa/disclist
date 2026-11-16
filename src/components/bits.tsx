@@ -10,8 +10,10 @@ import type { Stats } from "@/lib/types";
 export function LogoMark({ className = "" }: { className?: string }) {
   return (
     <svg viewBox="0 0 39 28" className={`shrink-0 overflow-visible ${className}`} aria-hidden>
-      <circle cx="27" cy="14" r="11" fill="var(--accent)" />
-      <circle cx="27" cy="14" r="2" fill="var(--bg)" />
+      <g className="logo-disc">
+        <circle cx="27" cy="14" r="11" fill="var(--accent)" />
+        <circle cx="27" cy="14" r="2" fill="var(--bg)" />
+      </g>
       <rect x="1" y="1" width="22" height="26" rx="2.6" fill="currentColor" />
     </svg>
   );

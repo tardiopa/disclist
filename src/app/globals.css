@@ -288,6 +288,19 @@ button:disabled {
   animation-duration: 0.35s;
 }
 
+/* Logo as a link: the record dips into its sleeve and comes back out. */
+@keyframes logo-dip {
+  40% {
+    transform: translateX(-7px);
+  }
+}
+
+@media (hover: hover) {
+  a:hover .logo-disc {
+    animation: logo-dip 0.7s cubic-bezier(0.3, 0.6, 0.2, 1);
+  }
+}
+
 /* ---------- overlays ---------- */
 
 @keyframes fade {

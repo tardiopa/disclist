@@ -68,7 +68,7 @@ export function Shell({ children }: { children: ReactNode }) {
     <Ctx.Provider value={ui}>
       <header className="sticky top-0 z-30 border-b border-line bg-bg">
         <div className="mx-auto flex h-14 max-w-[1500px] items-center gap-8 px-5 sm:px-8">
-          <Link href="/collection" className="text-[17px]">
+          <Link href="/" className="text-[17px]">
             <Logo />
           </Link>
           <nav className="hidden h-full items-center gap-6 sm:flex">

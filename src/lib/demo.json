@@ -1,0 +1,181 @@
+{
+  "count": 33,
+  "grid": [
+    {
+      "title": "Damn",
+      "artist": "Kendrick Lamar",
+      "year": 2017,
+      "img": "/landing/c0.jpg"
+    },
+    {
+      "title": "Dissidænce Episode 1 & 2",
+      "artist": "Vitalic",
+      "year": 2022,
+      "img": "/landing/c1.jpg"
+    },
+    {
+      "title": "Sun Structures",
+      "artist": "Temples",
+      "year": 2014,
+      "img": "/landing/c2.jpg"
+    },
+    {
+      "title": "Demon Days",
+      "artist": "Gorillaz",
+      "year": 2005,
+      "img": "/landing/c3.jpg"
+    },
+    {
+      "title": "The Universe Smiles Upon You",
+      "artist": "Khruangbin",
+      "year": 2015,
+      "img": "/landing/c4.jpg"
+    },
+    {
+      "title": "Currents",
+      "artist": "Tame Impala",
+      "year": 2015,
+      "img": "/landing/c5.jpg"
+    },
+    {
+      "title": "First Impressions Of Earth",
+      "artist": "The Strokes",
+      "year": 2006,
+      "img": "/landing/c6.jpg"
+    },
+    {
+      "title": "Modern Vampires Of The City",
+      "artist": "Vampire Weekend",
+      "year": 2013,
+      "img": "/landing/c7.jpg"
+    },
+    {
+      "title": "Igor",
+      "artist": "Tyler, The Creator",
+      "year": 2019,
+      "img": "/landing/c8.jpg"
+    },
+    {
+      "title": "21",
+      "artist": "Adele",
+      "year": 2011,
+      "img": "/landing/c9.jpg"
+    },
+    {
+      "title": "The Dark Side Of The Moon",
+      "artist": "Pink Floyd",
+      "year": 1973,
+      "img": "/landing/c10.jpg"
+    },
+    {
+      "title": "Mother's Milk",
+      "artist": "Red Hot Chili Peppers",
+      "year": 1989,
+      "img": "/landing/c11.jpg"
+    }
+  ],
+  "wish": [
+    {
+      "title": "Wonderer",
+      "artist": "Sunbeam Sound Machine",
+      "year": 2014,
+      "genre": "Rock",
+      "avg": 64.56,
+      "min": 46.11,
+      "forSale": 5,
+      "img": "/landing/w0.jpg"
+    },
+    {
+      "title": "Sun Restructured",
+      "artist": "Temples",
+      "year": 2014,
+      "genre": "Rock",
+      "avg": 26.34,
+      "min": 26.34,
+      "forSale": 19,
+      "img": "/landing/w1.jpg"
+    },
+    {
+      "title": "Southern Comfort",
+      "artist": "The Crusaders",
+      "year": 1974,
+      "genre": "Jazz",
+      "avg": 4.96,
+      "min": 1.37,
+      "forSale": 200,
+      "img": "/landing/w2.jpg"
+    },
+    {
+      "title": "Demon Days",
+      "artist": "Gorillaz",
+      "year": 2005,
+      "genre": "Electronic",
+      "avg": 30.87,
+      "min": 25.45,
+      "forSale": 430,
+      "img": "/landing/w3.jpg"
+    },
+    {
+      "title": "2012 - 2017",
+      "artist": "Against All Logic",
+      "year": 2018,
+      "genre": "Electronic",
+      "avg": 89.09,
+      "min": 89.09,
+      "forSale": 9,
+      "img": "/landing/w4.jpg"
+    }
+  ],
+  "genres": [
+    {
+      "name": "Rock",
+      "count": 21
+    },
+    {
+      "name": "Pop",
+      "count": 9
+    },
+    {
+      "name": "Electronic",
+      "count": 8
+    },
+    {
+      "name": "Funk / Soul",
+      "count": 6
+    },
+    {
+      "name": "Hip Hop",
+      "count": 4
+    }
+  ],
+  "decades": [
+    {
+      "decade": 1960,
+      "count": 1
+    },
+    {
+      "decade": 1970,
+      "count": 7
+    },
+    {
+      "decade": 1980,
+      "count": 0
+    },
+    {
+      "decade": 1990,
+      "count": 0
+    },
+    {
+      "decade": 2000,
+      "count": 1
+    },
+    {
+      "decade": 2010,
+      "count": 8
+    },
+    {
+      "decade": 2020,
+      "count": 11
+    }
+  ]
+}
