@@ -153,14 +153,13 @@ export function Detail({ target, onClose: unmount, morphed }: { target: DetailTa
   return (
     <div
       className={`${morphed ? "" : "anim-fade"} fixed inset-0 z-50 overflow-y-auto bg-bg scroll-thin [scrollbar-gutter:stable] transition-opacity duration-300 ease-out ${closing ? "pointer-events-none opacity-0" : ""}`} role="dialog" aria-modal aria-label={title}>
-      {/* Opaque bar pinned to the top edge, like the app header, so the
-          browser chrome above it stays a plain colour. */}
-      <div className="fixed inset-x-0 top-0 z-10 bg-bg [scrollbar-gutter:stable]">
-        <div className="mx-auto flex h-14 max-w-6xl items-center justify-end px-5 sm:px-8">
+      {/* Floating close button, aligned with the right edge of the content. */}
+      <div className="pointer-events-none fixed inset-x-0 top-0 z-10 [scrollbar-gutter:stable]">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-end px-5 sm:px-8">
           <button
             onClick={onClose}
             aria-label="Close"
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-line hover:border-ink"
+            className="pointer-events-auto flex h-10 w-10 items-center justify-center rounded-full border border-line bg-bg/80 backdrop-blur-md hover:border-ink"
           >
             <X size={18} />
           </button>

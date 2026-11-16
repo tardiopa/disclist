@@ -33,6 +33,7 @@ async function detectLang(): Promise<Lang> {
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const lang = await detectLang();
+  const likely = (await cookies()).get("authed")?.value === "1";
   return (
     <html lang={lang} className={`${grotesk.variable} ${plex.variable}`} suppressHydrationWarning>
       <head>
@@ -40,7 +41,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       </head>
       <body>
         <I18nProvider initial={lang}>
-          <AuthProvider>{children}</AuthProvider>
+          <AuthProvider likely={likely}>{children}</AuthProvider>
         </I18nProvider>
       </body>
     </html>

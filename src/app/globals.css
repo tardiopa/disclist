@@ -79,6 +79,8 @@
 }
 
 html {
+  /* Nothing may make the page scroll sideways. */
+  overflow-x: clip;
   /* Keep the scrollbar's space reserved so the page does not resize when an
      overlay locks and releases scrolling. */
   scrollbar-gutter: stable;
@@ -118,6 +120,16 @@ input {
 input:focus-visible,
 select:focus-visible {
   outline: none;
+}
+
+/* iOS Safari zooms the page when a focused field's text is under 16px, and
+   stays zoomed afterwards. */
+@media (max-width: 640px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
 }
 
 button {
@@ -304,7 +316,7 @@ button:disabled {
 /* Landing page: a block fades in and rises the first time it scrolls into view. */
 .reveal {
   opacity: 0;
-  transform: translateY(48px);
+  transform: translateY(36px);
   transition:
     opacity 0.9s ease,
     transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
