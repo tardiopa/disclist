@@ -63,6 +63,47 @@
   color-scheme: dark;
 }
 
+/* A band in the opposite theme of the page, to break the rhythm. */
+.flip {
+  --bg: #100f0e;
+  --surface: #181716;
+  --raised: #1f1e1c;
+  --ink: #ebe8e1;
+  --muted: #8d887f;
+  --faint: #5f5b55;
+  --line: #2b2927;
+  --accent: #ff6b47;
+  --shadow: 0 0 0;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .flip {
+    --bg: #f1eee8;
+    --surface: #f9f7f3;
+    --raised: #ffffff;
+    --ink: #181715;
+    --muted: #7a756c;
+    --faint: #a8a39a;
+    --line: #dcd8cf;
+    --accent: #d9442a;
+    --shadow: 28 24 18;
+  }
+}
+
+:root[data-theme="dark"] .flip {
+  --bg: #f1eee8;
+  --surface: #f9f7f3;
+  --raised: #ffffff;
+  --ink: #181715;
+  --muted: #7a756c;
+  --faint: #a8a39a;
+  --line: #dcd8cf;
+  --accent: #d9442a;
+  --shadow: 28 24 18;
+}
+
 @theme inline {
   --color-bg: var(--bg);
   --color-surface: var(--surface);
@@ -299,6 +340,20 @@ button:disabled {
   a:hover .logo-disc {
     animation: logo-dip 0.7s cubic-bezier(0.3, 0.6, 0.2, 1);
   }
+}
+
+/* Landing page: a block fades in and rises the first time it scrolls into view. */
+.reveal {
+  opacity: 0;
+  transform: translateY(48px);
+  transition:
+    opacity 0.9s ease,
+    transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.reveal.in {
+  opacity: 1;
+  transform: none;
 }
 
 /* ---------- overlays ---------- */

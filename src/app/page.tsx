@@ -21,17 +21,15 @@ function Reveal({ children, className = "", delay = 0 }: { children: ReactNode; 
         setShown(true);
         io.disconnect();
       },
-      { threshold: 0.2, rootMargin: "0px 0px -8% 0px" },
+      // Wait until a good part of the block is inside the screen, so the
+      // movement happens in front of the reader and not below the fold.
+      { threshold: 0.2, rootMargin: "0px 0px -80px 0px" },
     );
     io.observe(el);
     return () => io.disconnect();
   }, []);
   return (
-    <div
-      ref={ref}
-      style={{ transitionDelay: `${delay}ms` }}
-      className={`transition-[opacity,transform] duration-700 ease-out ${shown ? "" : "translate-y-8 opacity-0"} ${className}`}
-    >
+    <div ref={ref} style={{ transitionDelay: `${delay}ms` }} className={`reveal ${shown ? "in" : ""} ${className}`}>
       {children}
     </div>
   );
@@ -101,26 +99,28 @@ export default function Landing() {
         ))}
       </section>
 
-      <section className="mt-24 border-t border-line py-24 text-center sm:mt-36 sm:py-36">
-        <Reveal>
+    </div>
+
+    {/* Closing band in the opposite theme of the page. */}
+    <section className="flip mt-24 px-5 py-28 text-center sm:mt-36 sm:py-40">
+      <Reveal>
         <h2 className="mx-auto max-w-[14ch] text-[40px] leading-none font-semibold tracking-[-0.04em] text-balance sm:text-[68px]">{t("ctaTitle")}</h2>
         <Link href={cta.href} className={`btn btn-primary mt-10 h-12 px-6 text-[15px] ${ready ? "" : "invisible"}`}>
           {cta.label}
           <ArrowRight size={17} />
         </Link>
-        </Reveal>
-      </section>
+      </Reveal>
+    </section>
 
-      <footer className="label flex items-center justify-between border-t border-line py-8">
-        <span>Disclist</span>
-        <span>
-          {t("poweredBy")}{" "}
-          <a href="https://www.linkedin.com/in/patrice-tardio-57101198" target="_blank" rel="noreferrer" className="text-ink underline-offset-4 hover:underline">
-            Patrice Tardio
-          </a>
-        </span>
-      </footer>
-    </div>
+    <footer className="label mx-auto flex max-w-[1300px] items-center justify-between px-5 py-8 sm:px-8">
+      <span>Disclist</span>
+      <span>
+        {t("poweredBy")}{" "}
+        <a href="https://www.linkedin.com/in/patrice-tardio-57101198" target="_blank" rel="noreferrer" className="text-ink underline-offset-4 hover:underline">
+          Patrice Tardio
+        </a>
+      </span>
+    </footer>
     </>
   );
 }
