@@ -203,7 +203,7 @@ export function LibraryView({ list, items, title, onOpen, onRemove, empty, actio
           {shown.map((i) => (
             <li key={i.id} className="group relative flex items-center gap-4 border-b border-line py-2.5 transition-colors hover:bg-surface">
               <button onClick={() => onOpen(i)} className="absolute inset-0" aria-label={`${i.title} — ${i.artist}`} />
-              <Thumb src={i.thumb || i.cover} alt="" />
+              <Thumb src={i.thumb || i.cover} alt="" coverId={i.id} />
               <span className="min-w-0 flex-1">
                 <span className="block truncate font-medium">{i.title}</span>
                 <span className="block truncate text-[13px] text-muted">
@@ -253,7 +253,7 @@ export function LibraryView({ list, items, title, onOpen, onRemove, empty, actio
           {shown.map((i, n) => (
             <li key={i.id} className="min-w-0">
               <button onClick={() => onOpen(i)} className="tile block w-full text-left">
-                <Sleeve src={i.cover || i.thumb} alt="" eager={n < 12} />
+                <Sleeve src={i.cover || i.thumb} alt="" eager={n < 12} coverId={i.id} />
                 <span className="mt-3 block truncate text-[14px] leading-tight font-medium lg:mt-4 lg:text-[15.5px]">{i.title}</span>
                 <span className="mt-0.5 flex items-baseline gap-2 text-[13px] text-muted lg:mt-1 lg:text-[14px]">
                   <span className="min-w-0 flex-1 truncate">{i.artist}</span>

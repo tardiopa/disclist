@@ -45,20 +45,45 @@ export function Art({ src, alt, eager }: { src: string; alt: string; eager?: boo
   );
 }
 
-export function Sleeve({ src, alt, out, eager }: { src: string; alt: string; out?: boolean; eager?: boolean }) {
+/**
+ * @param coverId  marks the artwork so the detail view can animate from it
+ * @param target   this is the artwork the animation lands on (detail view)
+ * @param reveal   the record slides out after the sleeve has landed
+ */
+export function Sleeve({
+  src,
+  alt,
+  out,
+  eager,
+  coverId,
+  target,
+  reveal,
+}: {
+  src: string;
+  alt: string;
+  out?: boolean;
+  eager?: boolean;
+  coverId?: string;
+  target?: boolean;
+  reveal?: boolean;
+}) {
   return (
     <div className="sleeve">
-      <div className={`wax ${out ? "wax-out" : ""}`} />
-      <div className="sleeve-art">
+      <div className={`wax ${reveal ? "wax-reveal" : out ? "wax-out" : ""}`} />
+      <div className={`sleeve-art ${target ? "cover-target" : ""}`} data-cover={coverId}>
         <Art src={src} alt={alt} eager={eager} />
       </div>
     </div>
   );
 }
 
-export function Thumb({ src, alt, size = 44 }: { src: string; alt: string; size?: number }) {
+export function Thumb({ src, alt, size = 44, coverId }: { src: string; alt: string; size?: number; coverId?: string }) {
   return (
-    <div className="shrink-0 overflow-hidden rounded-[2px] bg-line [&_img]:h-full [&_img]:w-full [&_img]:object-cover" style={{ width: size, height: size }}>
+    <div
+      className="shrink-0 overflow-hidden rounded-[2px] bg-line [&_img]:h-full [&_img]:w-full [&_img]:object-cover"
+      style={{ width: size, height: size }}
+      data-cover={coverId}
+    >
       <Art src={src} alt={alt} />
     </div>
   );

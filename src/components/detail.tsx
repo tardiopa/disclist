@@ -30,7 +30,7 @@ function useEscape(onClose: () => void) {
   }, [onClose]);
 }
 
-export function Detail({ target, onClose }: { target: DetailTarget; onClose: () => void }) {
+export function Detail({ target, onClose, morphed }: { target: DetailTarget; onClose: () => void; morphed?: boolean }) {
   const { t, money, count } = useI18n();
   const lib = useOptionalLibrary();
   const token = lib?.link?.token;
@@ -141,7 +141,7 @@ export function Detail({ target, onClose }: { target: DetailTarget; onClose: () 
   ];
 
   return (
-    <div className="anim-fade fixed inset-0 z-50 overflow-y-auto bg-bg scroll-thin" role="dialog" aria-modal aria-label={title}>
+    <div className={`${morphed ? "" : "anim-fade"} fixed inset-0 z-50 overflow-y-auto bg-bg scroll-thin`} role="dialog" aria-modal aria-label={title}>
       <button
         onClick={onClose}
         aria-label="Close"
@@ -150,14 +150,14 @@ export function Detail({ target, onClose }: { target: DetailTarget; onClose: () 
         <X size={18} />
       </button>
 
-      <div className="anim-rise mx-auto grid max-w-6xl gap-10 px-5 pt-16 pb-24 sm:px-8 md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] md:gap-16 md:pt-24">
-        <div className="md:sticky md:top-24 md:self-start">
+      <div className="mx-auto grid max-w-6xl gap-10 px-5 pt-16 pb-24 sm:px-8 md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] md:gap-16 md:pt-24">
+        <div className={`md:sticky md:top-24 md:self-start ${morphed ? "" : "anim-rise"}`}>
           <div className="mx-auto w-[78%] -translate-x-[9%] md:w-[82%]">
-            <Sleeve src={cover} alt={title} out eager />
+            <Sleeve src={cover} alt={title} reveal target eager />
           </div>
         </div>
 
-        <div className="min-w-0">
+        <div className="anim-rise-late min-w-0">
           <p className="label">{[year, ...genres].filter(Boolean).join(" · ")}</p>
           <h1 className="mt-3 text-[34px] leading-[1.02] font-semibold tracking-[-0.035em] text-balance sm:text-[46px]">{title}</h1>
           <p className="mt-2 text-xl text-muted sm:text-2xl">{artistName}</p>

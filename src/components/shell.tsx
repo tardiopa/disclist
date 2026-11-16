@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useMemo, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Plus, Settings2 } from "lucide-react";
@@ -9,6 +9,7 @@ import { Logo, Spinner } from "./bits";
 import { Detail, type DetailTarget } from "./detail";
 import { useLibrary } from "./library";
 import { useI18n } from "@/lib/i18n";
+import { morph } from "@/lib/morph";
 import type { Key } from "@/lib/dict";
 
 interface Ui {
@@ -31,10 +32,21 @@ export function Shell({ children }: { children: ReactNode }) {
   const { pending } = useLibrary();
   const [adding, setAdding] = useState(false);
   const [detail, setDetail] = useState<DetailTarget | null>(null);
+  const [morphed, setMorphed] = useState(false);
+  const detailRef = useRef<DetailTarget | null>(null);
+  detailRef.current = detail;
 
-  const ui = useMemo<Ui>(() => ({ openAdd: () => setAdding(true), openDetail: setDetail }), []);
+  // The cover travels from its tile to the detail view, and back on close.
+  const coverId = (t: DetailTarget | null) => (t && t.list && "id" in t.base ? t.base.id : null);
+  const openDetail = useCallback((t: DetailTarget) => {
+    setMorphed(morph("open", coverId(t), () => setDetail(t)));
+  }, []);
+
+  const ui = useMemo<Ui>(() => ({ openAdd: () => setAdding(true), openDetail }), [openDetail]);
   const closeAdd = useCallback(() => setAdding(false), []);
-  const closeDetail = useCallback(() => setDetail(null), []);
+  const closeDetail = useCallback(() => {
+    morph("close", coverId(detailRef.current), () => setDetail(null));
+  }, []);
 
   return (
     <Ctx.Provider value={ui}>
@@ -91,10 +103,10 @@ export function Shell({ children }: { children: ReactNode }) {
         <AddRecord
           hidden={!!detail}
           onClose={closeAdd}
-          onPick={(hit) => setDetail({ base: hit })}
+          onPick={(hit) => openDetail({ base: hit })}
         />
       )}
-      {detail && <Detail key={detail.base.key + ("id" in detail.base ? detail.base.id : "")} target={detail} onClose={closeDetail} />}
+      {detail && <Detail key={detail.base.key + ("id" in detail.base ? detail.base.id : "")} target={detail} onClose={closeDetail} morphed={morphed} />}
     </Ctx.Provider>
   );
 }

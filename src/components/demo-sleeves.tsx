@@ -78,7 +78,7 @@ export function DemoShelf() {
   return (
     <div className="grid grid-cols-3 gap-x-5 gap-y-7 sm:grid-cols-4 sm:gap-x-8 sm:gap-y-10 lg:grid-cols-6" aria-hidden>
       {ART.map((art, i) => (
-        <div key={i} className={`tile ${i >= 9 ? "hidden sm:block" : ""}`}>
+        <div key={i} className={`tile ${i >= 9 ? "hidden sm:block" : ""}`} style={i === 2 || i === 9 ? { zIndex: 5 } : undefined}>
           <div className="sleeve">
             <div className={`wax ${i === 2 || i === 9 ? "wax-out" : ""}`} />
             <div className="sleeve-art">
