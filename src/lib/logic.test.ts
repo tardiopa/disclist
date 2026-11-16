@@ -121,9 +121,9 @@ test("dashboard summary", () => {
       item({ id: "a", key: "m4", year: 1969, genres: ["Rock"], stats: st(30) }),
       item({ id: "b", year: 1998, genres: ["Electronic", "Rock"], stats: st(80.4) }),
       item({ id: "c", year: null, genres: [], stats: null }),
-      item({ id: "d", key: "m2", stats: st(50) }),
-      item({ id: "e", key: "m2", stats: st(50) }),
-      item({ id: "f", key: "m3", stats: st(5) }),
+      item({ id: "d", key: "m2", year: null, stats: st(50) }),
+      item({ id: "e", key: "m2", year: null, stats: st(50) }),
+      item({ id: "f", key: "m3", year: null, stats: st(5) }),
     ],
     [item({ id: "w", stats: st(25) }), item({ id: "x", stats: st(null) })],
   );
