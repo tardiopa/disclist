@@ -32,7 +32,7 @@ export default function SharedPage({ params }: { params: Promise<{ id: string }>
 
   return (
     <>
-      <header className="sticky top-0 z-30 border-b border-line bg-bg/90 backdrop-blur-md">
+      <header className="sticky top-0 z-30 border-b border-line bg-bg">
         <div className="mx-auto flex h-14 max-w-[1500px] items-center justify-between px-5 sm:px-8">
           <Link href="/" className="text-[17px]">
             <Logo />

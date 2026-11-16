@@ -50,7 +50,7 @@ export function Shell({ children }: { children: ReactNode }) {
 
   return (
     <Ctx.Provider value={ui}>
-      <header className="sticky top-0 z-30 border-b border-line bg-bg/90 backdrop-blur-md">
+      <header className="sticky top-0 z-30 border-b border-line bg-bg">
         <div className="mx-auto flex h-14 max-w-[1500px] items-center gap-8 px-5 sm:px-8">
           <Link href="/collection" className="text-[17px]">
             <Logo />
@@ -89,7 +89,12 @@ export function Shell({ children }: { children: ReactNode }) {
         </div>
       </header>
 
-      <main className="mx-auto max-w-[1500px] px-5 pb-20 sm:px-8 sm:pb-0">{children}</main>
+      <main className="mx-auto max-w-[1500px] px-5 pb-20 sm:px-8 sm:pb-0">
+        {/* Re-mounted per screen so each one fades in the same way. */}
+        <div key={path} className="anim-page">
+          {children}
+        </div>
+      </main>
 
       <nav className="fixed inset-x-0 bottom-0 z-30 flex border-t border-line bg-bg/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-md sm:hidden">
         {TABS.map(([href, key]) => (

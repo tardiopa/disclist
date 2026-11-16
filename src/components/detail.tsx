@@ -142,13 +142,17 @@ export function Detail({ target, onClose, morphed }: { target: DetailTarget; onC
 
   return (
     <div className={`${morphed ? "" : "anim-fade"} fixed inset-0 z-50 overflow-y-auto bg-bg scroll-thin`} role="dialog" aria-modal aria-label={title}>
-      <button
-        onClick={onClose}
-        aria-label="Close"
-        className="fixed top-4 right-4 z-10 flex h-10 w-10 items-center justify-center rounded-full border border-line bg-bg/80 backdrop-blur hover:border-ink sm:top-6 sm:right-6"
-      >
-        <X size={18} />
-      </button>
+      {/* Opaque bar pinned to the top edge, like the app header, so the
+          browser chrome above it stays a plain colour. */}
+      <div className="fixed inset-x-0 top-0 z-10 flex h-14 items-center justify-end bg-bg px-4 sm:px-6">
+        <button
+          onClick={onClose}
+          aria-label="Close"
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-line hover:border-ink"
+        >
+          <X size={18} />
+        </button>
+      </div>
 
       <div className="mx-auto grid max-w-6xl gap-10 px-5 pt-16 pb-24 sm:px-8 md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] md:gap-16 md:pt-24">
         <div className={`md:sticky md:top-24 md:self-start ${morphed ? "" : "anim-rise"}`}>

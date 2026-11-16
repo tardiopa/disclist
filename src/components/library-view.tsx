@@ -83,7 +83,7 @@ export function LibraryView({ list, items, title, onOpen, onRemove, empty, actio
       </header>
 
       {items.length > 0 && (
-        <div className="sticky top-14 z-20 -mx-5 flex flex-wrap items-center gap-2 border-y border-line bg-bg/90 px-5 py-2.5 backdrop-blur-md sm:-mx-8 sm:px-8">
+        <div className="sticky top-14 z-20 -mx-5 flex flex-wrap items-center gap-2 border-y border-line bg-bg px-5 py-2.5 sm:-mx-8 sm:px-8">
           <label className="flex h-9 basis-full items-center gap-2 rounded-full border border-line pr-1 pl-3.5 transition-colors focus-within:border-ink sm:mr-auto sm:max-w-xs sm:flex-1 sm:basis-auto">
             <Search size={15} className="shrink-0 text-muted" />
             <input
