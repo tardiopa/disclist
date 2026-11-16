@@ -1,0 +1,100 @@
+"use client";
+
+import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Plus, Settings2 } from "lucide-react";
+import { AddRecord } from "./add";
+import { Logo, Spinner } from "./bits";
+import { Detail, type DetailTarget } from "./detail";
+import { useLibrary } from "./library";
+import { useI18n } from "@/lib/i18n";
+import type { Key } from "@/lib/dict";
+
+interface Ui {
+  openAdd: () => void;
+  openDetail: (t: DetailTarget) => void;
+}
+
+const Ctx = createContext<Ui>({ openAdd: () => {}, openDetail: () => {} });
+export const useUi = () => useContext(Ctx);
+
+const TABS: [string, Key][] = [
+  ["/collection", "collection"],
+  ["/wishlist", "wishlist"],
+  ["/dashboard", "dashboard"],
+];
+
+export function Shell({ children }: { children: ReactNode }) {
+  const { t, count } = useI18n();
+  const path = usePathname();
+  const { pending } = useLibrary();
+  const [adding, setAdding] = useState(false);
+  const [detail, setDetail] = useState<DetailTarget | null>(null);
+
+  const ui = useMemo<Ui>(() => ({ openAdd: () => setAdding(true), openDetail: setDetail }), []);
+  const closeAdd = useCallback(() => setAdding(false), []);
+  const closeDetail = useCallback(() => setDetail(null), []);
+
+  return (
+    <Ctx.Provider value={ui}>
+      <header className="sticky top-0 z-30 border-b border-line bg-bg/90 backdrop-blur-md">
+        <div className="mx-auto flex h-14 max-w-[1500px] items-center gap-8 px-5 sm:px-8">
+          <Link href="/collection" className="text-[17px]">
+            <Logo />
+          </Link>
+          <nav className="hidden h-full items-center gap-6 sm:flex">
+            {TABS.map(([href, key]) => (
+              <Link
+                key={href}
+                href={href}
+                className={`relative flex h-full items-center text-[14px] transition-colors ${path === href ? "text-ink" : "text-muted hover:text-ink"}`}
+              >
+                {t(key)}
+                {path === href && <span className="absolute inset-x-0 -bottom-px h-px bg-ink" />}
+              </Link>
+            ))}
+          </nav>
+          <div className="ml-auto flex items-center gap-2">
+            {pending > 0 && (
+              <span className="label mr-2 hidden items-center gap-2 md:inline-flex" title={t("pricing")}>
+                <Spinner className="h-3 w-3" />
+                {t("pricing")} · {count(pending)}
+              </span>
+            )}
+            <button onClick={ui.openAdd} className="btn btn-primary h-9 pr-4 pl-3">
+              <Plus size={16} />
+              {t("add")}
+            </button>
+            <Link
+              href="/settings"
+              aria-label={t("settings")}
+              className={`flex h-9 w-9 items-center justify-center rounded-full border transition-colors ${path === "/settings" ? "border-ink" : "border-line hover:border-ink"}`}
+            >
+              <Settings2 size={16} />
+            </Link>
+          </div>
+        </div>
+      </header>
+
+      <main className="mx-auto max-w-[1500px] px-5 pb-20 sm:px-8 sm:pb-0">{children}</main>
+
+      <nav className="fixed inset-x-0 bottom-0 z-30 flex border-t border-line bg-bg/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-md sm:hidden">
+        {TABS.map(([href, key]) => (
+          <Link key={href} href={href} className={`flex h-13 flex-1 items-center justify-center text-[13px] ${path === href ? "font-medium text-ink" : "text-muted"}`}>
+            {t(key)}
+          </Link>
+        ))}
+      </nav>
+
+      {adding && (
+        <AddRecord
+          hidden={!!detail}
+          onClose={closeAdd}
+          onPick={(hit) => setDetail({ base: hit })}
+        />
+      )}
+      {detail && <Detail key={detail.base.key + ("id" in detail.base ? detail.base.id : "")} target={detail} onClose={closeDetail} />}
+    </Ctx.Provider>
+  );
+}
