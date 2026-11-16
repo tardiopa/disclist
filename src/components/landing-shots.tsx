@@ -182,56 +182,39 @@ export function ShareShot() {
   );
 }
 
-/* ---------- small visuals for the secondary promises ---------- */
-
-export function PriceMini() {
-  const { money } = useI18n();
-  const w = demo.wish[3] ?? demo.wish[0];
-  // An album and what it is worth: no "price" wording that could read as Disclist's own pricing.
-  return (
-    <div aria-hidden className="flex w-full max-w-xs items-center gap-3">
-      <Cover src={w.img} className="w-12 shrink-0 shadow-none" />
-      <span className="min-w-0 flex-1">
-        <span className="block truncate text-[14px] font-medium">{w.title}</span>
-        <span className="block truncate text-[12.5px] text-muted">{w.artist}</span>
-      </span>
-      <span className="num text-[26px] leading-none font-medium tracking-[-0.04em]">{money(w.avg)}</span>
-    </div>
-  );
-}
-
-export function RarityMini() {
-  const { t } = useI18n();
-  const rows: [string, string][] = [
-    ["bg-faint", t("rarity1")],
-    ["bg-amber", t("rarity2")],
-    ["bg-accent", t("rarity3")],
-  ];
-  return (
-    <div aria-hidden className="flex flex-wrap gap-2">
-      {rows.map(([dot, label]) => (
-        <span key={label} className="inline-flex h-8 items-center gap-2 rounded-full border border-line px-3 text-[13px]">
-          <span className={`h-2 w-2 rounded-full ${dot}`} />
-          {label}
-        </span>
-      ))}
-    </div>
-  );
-}
-
-export function DashboardMini() {
+/** The dashboard: how big the collection is and what it is made of. */
+export function DashboardShot() {
+  const { t, count } = useI18n();
   const max = demo.genres[0]?.count ?? 1;
+  const decadeMax = Math.max(1, ...demo.decades.map((d) => d.count));
   return (
-    <div aria-hidden className="space-y-2">
-      {demo.genres.slice(0, 4).map((g) => (
-        <div key={g.name} className="grid grid-cols-[5.5rem_1fr_1.5rem] items-center gap-3 text-[12.5px]">
-          <span className="truncate">{g.name}</span>
-          <span className="h-1.5">
-            <span className="block h-full rounded-r-[3px] bg-ink" style={{ width: `${(g.count / max) * 100}%` }} />
-          </span>
-          <span className="num text-right text-[11.5px] text-muted">{g.count}</span>
+    <Frame className="px-5 pt-5 pb-6 sm:px-6">
+      <p className="text-[22px] leading-none font-semibold tracking-[-0.03em]">{t("dashboard")}</p>
+      <div className="mt-5 flex items-end justify-between border-y border-line py-4">
+        <div>
+          <p className="label">{t("inCollectionCount")}</p>
+          <p className="num mt-2 text-[34px] leading-none font-medium tracking-[-0.04em]">{count(demo.count)}</p>
         </div>
-      ))}
-    </div>
+        <div className="flex h-14 items-end gap-1.5">
+          {demo.decades.map((d) => (
+            <span key={d.decade} className="flex w-5 flex-col items-center justify-end gap-1 self-stretch">
+              <span className="w-full rounded-t-[3px] bg-ink" style={{ height: `${(d.count / decadeMax) * 100}%`, minHeight: d.count ? 2 : 0 }} />
+            </span>
+          ))}
+        </div>
+      </div>
+      <p className="label mt-5">{t("topGenres")}</p>
+      <div className="mt-3 space-y-2.5">
+        {demo.genres.map((g) => (
+          <div key={g.name} className="grid grid-cols-[6.5rem_1fr_1.5rem] items-center gap-3 text-[13px]">
+            <span className="truncate">{g.name}</span>
+            <span className="h-1.5">
+              <span className="block h-full rounded-r-[3px] bg-ink" style={{ width: `${(g.count / max) * 100}%` }} />
+            </span>
+            <span className="num text-right text-[12px] text-muted">{g.count}</span>
+          </div>
+        ))}
+      </div>
+    </Frame>
   );
 }

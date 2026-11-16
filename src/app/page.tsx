@@ -1,12 +1,41 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { useAuth } from "@/components/auth";
 import { Logo } from "@/components/bits";
-import { CollectionShot, DashboardMini, DiscogsShot, PriceMini, RarityMini, ShareShot, WishlistShot } from "@/components/landing-shots";
+import { CollectionShot, DashboardShot, DiscogsShot, ShareShot, WishlistShot } from "@/components/landing-shots";
 import { useI18n } from "@/lib/i18n";
+
+/** Fades its content up the first time it scrolls into view. */
+function Reveal({ children, className = "", delay = 0 }: { children: ReactNode; className?: string; delay?: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [shown, setShown] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        setShown(true);
+        io.disconnect();
+      },
+      { threshold: 0.2, rootMargin: "0px 0px -8% 0px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  return (
+    <div
+      ref={ref}
+      style={{ transitionDelay: `${delay}ms` }}
+      className={`transition-[opacity,transform] duration-700 ease-out ${shown ? "" : "translate-y-8 opacity-0"} ${className}`}
+    >
+      {children}
+    </div>
+  );
+}
 
 export default function Landing() {
   const { t, lang, setLang } = useI18n();
@@ -20,13 +49,8 @@ export default function Landing() {
     { title: t("v1Title"), text: t("v1Text"), shot: <DiscogsShot /> },
     { title: t("v2Title"), text: t("v2Text"), shot: <WishlistShot /> },
     { title: t("v3Title"), text: t("v3Text"), shot: <ShareShot /> },
+    { title: t("s3Title"), text: t("s3Text"), shot: <DashboardShot /> },
   ];
-  const extras: { title: string; text: string; visual: ReactNode }[] = [
-    { title: t("s1Title"), text: t("s1Text"), visual: <PriceMini /> },
-    { title: t("s2Title"), text: t("s2Text"), visual: <RarityMini /> },
-    { title: t("s3Title"), text: t("s3Text"), visual: <DashboardMini /> },
-  ];
-
   return (
     <>
     {/* Always in view, so signing in is one click away from anywhere on the page. */}
@@ -58,37 +82,33 @@ export default function Landing() {
         </Link>
       </section>
 
-      <CollectionShot />
+      <Reveal>
+        <CollectionShot />
+      </Reveal>
 
       <section className="mt-24 space-y-20 sm:mt-36 sm:space-y-32">
         {promises.map((p, n) => (
           <div key={p.title} className="grid items-center gap-10 md:grid-cols-2 md:gap-20">
-            <div className={n % 2 ? "md:order-2" : ""}>
+            <Reveal className={n % 2 ? "md:order-2" : ""}>
               <p className="label">0{n + 1}</p>
               <h2 className="mt-4 max-w-[14ch] text-[32px] leading-[1.05] font-semibold tracking-[-0.035em] text-balance sm:text-[44px]">{p.title}</h2>
               <p className="mt-4 max-w-md text-lg text-muted">{p.text}</p>
-            </div>
-            <div className={n % 2 ? "md:order-1" : ""}>{p.shot}</div>
+            </Reveal>
+            <Reveal className={n % 2 ? "md:order-1" : ""} delay={140}>
+              {p.shot}
+            </Reveal>
           </div>
         ))}
       </section>
 
-      <section className="mt-24 grid border-t border-line sm:mt-36 md:grid-cols-3">
-        {extras.map((e, n) => (
-          <div key={e.title} className={`flex flex-col border-b border-line py-9 md:border-b-0 md:py-11 ${n ? "md:border-l md:pl-8" : ""} md:pr-8`}>
-            <div className="flex h-20 items-end">{e.visual}</div>
-            <h3 className="mt-7 text-xl font-medium tracking-tight">{e.title}</h3>
-            <p className="mt-2 text-muted">{e.text}</p>
-          </div>
-        ))}
-      </section>
-
-      <section className="border-t border-line py-24 text-center sm:py-36">
+      <section className="mt-24 border-t border-line py-24 text-center sm:mt-36 sm:py-36">
+        <Reveal>
         <h2 className="mx-auto max-w-[14ch] text-[40px] leading-none font-semibold tracking-[-0.04em] text-balance sm:text-[68px]">{t("ctaTitle")}</h2>
         <Link href={cta.href} className={`btn btn-primary mt-10 h-12 px-6 text-[15px] ${ready ? "" : "invisible"}`}>
           {cta.label}
           <ArrowRight size={17} />
         </Link>
+        </Reveal>
       </section>
 
       <footer className="label flex items-center justify-between border-t border-line py-8">
