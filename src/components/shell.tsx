@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useMemo, useRef, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Plus, Settings2 } from "lucide-react";
@@ -9,7 +9,7 @@ import { Logo, Spinner } from "./bits";
 import { Detail, type DetailTarget } from "./detail";
 import { useLibrary } from "./library";
 import { useI18n } from "@/lib/i18n";
-import { morph } from "@/lib/morph";
+import { morphOpen } from "@/lib/morph";
 import type { Key } from "@/lib/dict";
 
 interface Ui {
@@ -26,6 +26,26 @@ const TABS: [string, Key][] = [
   ["/dashboard", "dashboard"],
 ];
 
+/**
+ * Fades a screen in. The fade starts only after the screen has been painted
+ * once (invisible): a heavy screen such as the cover grid would otherwise spend
+ * the whole animation on its first paint and simply pop in.
+ */
+function PageFade({ children }: { children: ReactNode }) {
+  const [shown, setShown] = useState(false);
+  useEffect(() => {
+    let second = 0;
+    const first = requestAnimationFrame(() => {
+      second = requestAnimationFrame(() => setShown(true));
+    });
+    return () => {
+      cancelAnimationFrame(first);
+      cancelAnimationFrame(second);
+    };
+  }, []);
+  return <div className={`transition-opacity duration-300 ease-out ${shown ? "opacity-100" : "opacity-0"}`}>{children}</div>;
+}
+
 export function Shell({ children }: { children: ReactNode }) {
   const { t, count } = useI18n();
   const path = usePathname();
@@ -33,20 +53,16 @@ export function Shell({ children }: { children: ReactNode }) {
   const [adding, setAdding] = useState(false);
   const [detail, setDetail] = useState<DetailTarget | null>(null);
   const [morphed, setMorphed] = useState(false);
-  const detailRef = useRef<DetailTarget | null>(null);
-  detailRef.current = detail;
 
   // The cover travels from its tile to the detail view, and back on close.
   const coverId = (t: DetailTarget | null) => (t && t.list && "id" in t.base ? t.base.id : null);
   const openDetail = useCallback((t: DetailTarget) => {
-    setMorphed(morph("open", coverId(t), () => setDetail(t)));
+    setMorphed(morphOpen(coverId(t), () => setDetail(t)));
   }, []);
 
   const ui = useMemo<Ui>(() => ({ openAdd: () => setAdding(true), openDetail }), [openDetail]);
   const closeAdd = useCallback(() => setAdding(false), []);
-  const closeDetail = useCallback(() => {
-    morph("close", coverId(detailRef.current), () => setDetail(null));
-  }, []);
+  const closeDetail = useCallback(() => setDetail(null), []);
 
   return (
     <Ctx.Provider value={ui}>
@@ -91,9 +107,7 @@ export function Shell({ children }: { children: ReactNode }) {
 
       <main className="mx-auto max-w-[1500px] px-5 pb-20 sm:px-8 sm:pb-0">
         {/* Re-mounted per screen so each one fades in the same way. */}
-        <div key={path} className="anim-page">
-          {children}
-        </div>
+        <PageFade key={path}>{children}</PageFade>
       </main>
 
       <nav className="fixed inset-x-0 bottom-0 z-30 flex border-t border-line bg-bg/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-md sm:hidden">

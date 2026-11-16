@@ -6,7 +6,7 @@ import { Logo } from "@/components/bits";
 import { Detail, type DetailTarget } from "@/components/detail";
 import { LibraryView } from "@/components/library-view";
 import { useI18n } from "@/lib/i18n";
-import { morph } from "@/lib/morph";
+import { morphOpen } from "@/lib/morph";
 import { loadShared, type Shared } from "@/lib/store";
 import type { ListName } from "@/lib/types";
 
@@ -51,7 +51,7 @@ export default function SharedPage({ params }: { params: Promise<{ id: string }>
             list={list}
             title={data.profile.name || t(list)}
             items={items}
-            onOpen={(item) => setMorphed(morph("open", item.id, () => setDetail({ base: item, list })))}
+            onOpen={(item) => setMorphed(morphOpen(item.id, () => setDetail({ base: item, list })))}
             empty={<p className="border-t border-line py-28 text-center text-lg text-muted">{t(list === "collection" ? "emptyCollection" : "emptyWishlist")}</p>}
             actions={
               data.collection && data.wishlist ? (
@@ -79,7 +79,7 @@ export default function SharedPage({ params }: { params: Promise<{ id: string }>
           key={detail.base.key}
           target={detail}
           morphed={morphed}
-          onClose={() => morph("close", "id" in detail.base ? detail.base.id : null, () => setDetail(null))}
+          onClose={() => setDetail(null)}
         />
       )}
     </>

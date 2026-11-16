@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ArrowRight, ArrowUpRight, Check, Plus, X } from "lucide-react";
 import { Confirm, Rarity, Sleeve, Spinner } from "./bits";
 import { useOptionalLibrary } from "./library";
@@ -30,7 +30,17 @@ function useEscape(onClose: () => void) {
   }, [onClose]);
 }
 
-export function Detail({ target, onClose, morphed }: { target: DetailTarget; onClose: () => void; morphed?: boolean }) {
+const CLOSE_MS = 300;
+
+export function Detail({ target, onClose: unmount, morphed }: { target: DetailTarget; onClose: () => void; morphed?: boolean }) {
+  // Closing is a plain fade of the whole view (same pace as switching screens);
+  // the screen underneath is already painted, so nothing has to travel back.
+  const [closing, setClosing] = useState(false);
+  const onClose = useCallback(() => {
+    setClosing(true);
+    setTimeout(unmount, CLOSE_MS);
+  }, [unmount]);
+
   const { t, money, count } = useI18n();
   const lib = useOptionalLibrary();
   const token = lib?.link?.token;
@@ -141,7 +151,8 @@ export function Detail({ target, onClose, morphed }: { target: DetailTarget; onC
   ];
 
   return (
-    <div className={`${morphed ? "" : "anim-fade"} fixed inset-0 z-50 overflow-y-auto bg-bg scroll-thin`} role="dialog" aria-modal aria-label={title}>
+    <div
+      className={`${morphed ? "" : "anim-fade"} fixed inset-0 z-50 overflow-y-auto bg-bg scroll-thin transition-opacity duration-300 ease-out ${closing ? "pointer-events-none opacity-0" : ""}`} role="dialog" aria-modal aria-label={title}>
       {/* Opaque bar pinned to the top edge, like the app header, so the
           browser chrome above it stays a plain colour. */}
       <div className="fixed inset-x-0 top-0 z-10 flex h-14 items-center justify-end bg-bg px-4 sm:px-6">
