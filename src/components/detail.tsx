@@ -105,7 +105,6 @@ export function Detail({ target, onClose: unmount, morphed }: { target: DetailTa
 
   const owned = lib?.collection.filter((i) => i.key === base.key) ?? [];
   const wished = lib?.wishlist.find((i) => i.key === base.key);
-  const yoursId = list === "collection" ? entry?.releaseId : null;
   const ownedIds = new Set(owned.map((i) => i.releaseId).filter(Boolean));
 
   const asNew = (): NewItem => ({
@@ -137,10 +136,10 @@ export function Detail({ target, onClose: unmount, morphed }: { target: DetailTa
 
   const editions = detail?.editions ?? [];
   const sortedEditions = useMemo(() => {
-    const mine = (id: number) => (id === yoursId ? 2 : ownedIds.has(id) ? 1 : 0);
+    const mine = (id: number) => (ownedIds.has(id) ? 1 : 0);
     return [...editions].sort((a, b) => mine(b.id) - mine(a.id) || b.have - a.have);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [editions, yoursId, owned.length]);
+  }, [editions, owned.length]);
   const visibleEditions = allEditions ? sortedEditions : sortedEditions.slice(0, 6);
 
   const cells: [string, React.ReactNode][] = [
@@ -303,12 +302,14 @@ export function Detail({ target, onClose: unmount, morphed }: { target: DetailTa
                 {t("editions")} · {count(detail!.versions)}
               </h2>
               <ul className="mt-3 border-t border-line">
-                {visibleEditions.map((e) => {
-                  const yours = e.id === yoursId;
-                  const canPick = !!lib && list === "collection" && !!entry;
-                  const body = (
-                    <>
-                      <span className={`mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full ${yours ? "bg-accent" : ownedIds.has(e.id) ? "bg-faint" : "bg-transparent"}`} />
+                {visibleEditions.map((e) => (
+                  <li key={e.id} className="border-b border-line">
+                    <a
+                      href={`https://www.discogs.com/release/${e.id}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="group flex items-center gap-3 py-2.5 transition-colors hover:bg-surface"
+                    >
                       <span className="num w-10 shrink-0 text-[12px] text-muted">{e.year || "—"}</span>
                       <span className="min-w-0 flex-1">
                         <span className="block truncate">
@@ -317,34 +318,15 @@ export function Detail({ target, onClose: unmount, morphed }: { target: DetailTa
                         </span>
                         <span className="block truncate text-[13px] text-muted">{[e.country, e.format].filter(Boolean).join(" · ")}</span>
                       </span>
-                      {yours && <span className="label text-accent">{t("yours")}</span>}
-                    </>
-                  );
-                  return (
-                    <li key={e.id} className="group flex items-start border-b border-line">
-                      {canPick ? (
-                        <button
-                          className="flex min-w-0 flex-1 items-start gap-3 py-2.5 text-left hover:bg-surface"
-                          title={t("markYours")}
-                          onClick={() => lib!.setEdition(entry!.id, yours ? null : e.id)}
-                        >
-                          {body}
-                        </button>
-                      ) : (
-                        <div className="flex min-w-0 flex-1 items-start gap-3 py-2.5">{body}</div>
+                      {ownedIds.has(e.id) && (
+                        <span className="label shrink-0 cursor-help text-ink" title={t("markYours")}>
+                          {t("yours")}
+                        </span>
                       )}
-                      <a
-                        href={`https://www.discogs.com/release/${e.id}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        aria-label="Discogs"
-                        className="ml-2 flex h-11 w-8 shrink-0 items-center justify-center text-faint hover:text-ink"
-                      >
-                        <ArrowUpRight size={15} />
-                      </a>
-                    </li>
-                  );
-                })}
+                      <ArrowUpRight size={15} className="mr-1 shrink-0 text-faint group-hover:text-ink" />
+                    </a>
+                  </li>
+                ))}
               </ul>
               {sortedEditions.length > 6 && !allEditions && (
                 <button className="label mt-3 hover:text-ink" onClick={() => setAllEditions(true)}>

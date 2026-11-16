@@ -79,6 +79,9 @@
 }
 
 html {
+  /* Keep the scrollbar's space reserved so the page does not resize when an
+     overlay locks and releases scrolling. */
+  scrollbar-gutter: stable;
   background: var(--bg);
   color: var(--ink);
   -webkit-font-smoothing: antialiased;

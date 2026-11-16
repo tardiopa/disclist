@@ -19,7 +19,6 @@ interface Library {
   add: (list: ListName, item: NewItem) => Promise<void>;
   remove: (list: ListName, id: string) => Promise<void>;
   gotIt: (item: Item) => Promise<void>;
-  setEdition: (id: string, releaseId: number | null) => Promise<void>;
   /** Store fresh market data on every entry of that album. */
   saveAlbum: (key: string, detail: AlbumDetail | null, stats: Stats) => Promise<void>;
 }
@@ -172,7 +171,6 @@ export function LibraryProvider({ children }: { children: ReactNode }) {
       add: (list, item) => store.addItem(uid, list, item),
       remove: (list, id) => store.removeItem(uid, list, id),
       gotIt: (item) => store.moveToCollection(uid, item),
-      setEdition: (id, releaseId) => store.patchItem(uid, "collection", id, { releaseId }),
       saveAlbum,
     }),
     [uid, profile, link, collection, wishlist, loaded, pending, saveAlbum],
