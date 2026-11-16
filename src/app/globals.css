@@ -28,6 +28,12 @@
     --shadow: 0 0 0;
     color-scheme: dark;
   }
+
+  .wax {
+    box-shadow:
+      0 0 0 1px rgb(255 255 255 / 0.09),
+      0 2px 10px -2px rgb(0 0 0 / 0.6);
+  }
 }
 
 @theme inline {
@@ -74,6 +80,11 @@ input {
   outline: 2px solid var(--ink);
   outline-offset: 2px;
   border-radius: 2px;
+}
+
+input:focus-visible,
+select:focus-visible {
+  outline: none;
 }
 
 button {

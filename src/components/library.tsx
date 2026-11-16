@@ -24,6 +24,8 @@ interface Library {
 }
 
 const Ctx = createContext<Library | null>(null);
+export const LibraryContext = Ctx;
+export type { Library };
 
 export const useLibrary = () => {
   const v = useContext(Ctx);
