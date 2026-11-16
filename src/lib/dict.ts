@@ -138,19 +138,11 @@ export const en = {
   v1Title: "Powered by Discogs",
   v1Text: "Covers, tracklists, editions: it all comes from Discogs. Import your collection and wantlist in one click, and keep them up to date.",
   v2Title: "Collection and wishlist",
-  v2Text: "Add the records you own, pick the ones you want.",
-  v3Title: "Private until you share",
-  v3Text: "Nothing is shared until you decide to.",
+  v2Text: "Add the records you own, pick the ones you want. Everything stays private, and you share whenever you like.",
   s1Title: "Value",
   s3Title: "Dashboard",
   s3Text: "Your collection's value, genres, artists and decades at a glance.",
   ctaTitle: "Your collection is waiting.",
-  d1Title: "Genres and artists",
-  d1Text: "What your collection is made of.",
-  d2Title: "Most valuable",
-  d2Text: "The records worth the most in your collection.",
-  d3Title: "Decades",
-  d3Text: "Your collection, era by era.",
 } as const;
 
 export type Key = keyof typeof en;
@@ -290,19 +282,11 @@ export const fr: Record<Key, string> = {
   v1Title: "Branché sur Discogs",
   v1Text: "Toutes les infos de vos vinyles viennent de Discogs. Importez votre collection et votre wantlist en un clic, et gardez-les à jour.",
   v2Title: "Collection et wishlist",
-  v2Text: "Ajoutez les vinyles que vous avez, sélectionnez ceux que vous cherchez.",
-  v3Title: "Privé, jusqu'à ce que vous partagiez",
-  v3Text: "Rien n'est partagé tant que vous ne l'avez pas décidé.",
+  v2Text: "Ajoutez les vinyles que vous avez, sélectionnez ceux que vous cherchez. Tout reste privé, vous partagez quand vous le souhaitez.",
   s1Title: "Cote",
   s3Title: "Tableau de bord",
   s3Text: "La valeur de votre collection, vos genres, vos artistes et vos décennies, en un coup d'œil.",
   ctaTitle: "Votre collection vous attend.",
-  d1Title: "Genres et artistes",
-  d1Text: "Ce qui domine votre collection.",
-  d2Title: "Les plus cotés",
-  d2Text: "Les vinyles qui valent le plus dans votre collection.",
-  d3Title: "Décennies",
-  d3Text: "Votre collection, époque par époque.",
 };
 
 export type Lang = "en" | "fr";

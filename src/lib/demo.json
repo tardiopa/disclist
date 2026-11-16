@@ -5,108 +5,93 @@
       "title": "Damn",
       "artist": "Kendrick Lamar",
       "year": 2017,
-      "img": "/landing/c0.jpg",
-      "avg": 24.37
+      "img": "/landing/c0.jpg"
     },
     {
       "title": "Dissidænce Episode 1 & 2",
       "artist": "Vitalic",
       "year": 2022,
-      "img": "/landing/c1.jpg",
-      "avg": 35
+      "img": "/landing/c1.jpg"
     },
     {
       "title": "Sun Structures",
       "artist": "Temples",
       "year": 2014,
-      "img": "/landing/c2.jpg",
-      "avg": 22.5
+      "img": "/landing/c2.jpg"
     },
     {
       "title": "Demon Days",
       "artist": "Gorillaz",
       "year": 2005,
-      "img": "/landing/c3.jpg",
-      "avg": 31.55
+      "img": "/landing/c3.jpg"
     },
     {
       "title": "The Universe Smiles Upon You",
       "artist": "Khruangbin",
       "year": 2015,
-      "img": "/landing/c4.jpg",
-      "avg": 24.37
+      "img": "/landing/c4.jpg"
     },
     {
       "title": "Currents",
       "artist": "Tame Impala",
       "year": 2015,
-      "img": "/landing/c5.jpg",
-      "avg": 25.46
+      "img": "/landing/c5.jpg"
     },
     {
       "title": "First Impressions Of Earth",
       "artist": "The Strokes",
       "year": 2006,
-      "img": "/landing/c6.jpg",
-      "avg": 22.33
+      "img": "/landing/c6.jpg"
     },
     {
       "title": "Modern Vampires Of The City",
       "artist": "Vampire Weekend",
       "year": 2013,
-      "img": "/landing/c7.jpg",
-      "avg": 16.88
+      "img": "/landing/c7.jpg"
     },
     {
       "title": "Igor",
       "artist": "Tyler, The Creator",
       "year": 2019,
-      "img": "/landing/c8.jpg",
-      "avg": 14.69
+      "img": "/landing/c8.jpg"
     },
     {
       "title": "21",
       "artist": "Adele",
       "year": 2011,
-      "img": "/landing/c9.jpg",
-      "avg": 16.6
+      "img": "/landing/c9.jpg"
     },
     {
       "title": "The Dark Side Of The Moon",
       "artist": "Pink Floyd",
       "year": 1973,
-      "img": "/landing/c10.jpg",
-      "avg": 12.27
+      "img": "/landing/c10.jpg"
     },
     {
       "title": "Mother's Milk",
       "artist": "Red Hot Chili Peppers",
       "year": 1989,
-      "img": "/landing/c11.jpg",
-      "avg": 20.09
+      "img": "/landing/c11.jpg"
     }
   ],
-  "top": [
+  "search": [
     {
-      "title": "Dissidænce Episode 1 & 2",
-      "artist": "Vitalic",
-      "year": 2022,
-      "img": "/landing/c1.jpg",
-      "avg": 35
+      "title": "Sgt. Pepper's Lonely Hearts Club Band",
+      "artist": "The Beatles",
+      "year": 1967,
+      "img": "/landing/s0.jpg"
     },
     {
-      "title": "Demon Days",
-      "artist": "Gorillaz",
-      "year": 2005,
-      "img": "/landing/c3.jpg",
-      "avg": 31.55
+      "title": "1962-1966",
+      "artist": "The Beatles",
+      "year": 1973,
+      "img": "/landing/s1.jpg"
     },
     {
-      "title": "Currents",
-      "artist": "Tame Impala",
-      "year": 2015,
-      "img": "/landing/c5.jpg",
-      "avg": 25.46
+      "title": "Abbey Road",
+      "artist": "The Beatles",
+      "year": 1969,
+      "img": "/landing/s2.jpg"
     }
   ],
   "wish": [
@@ -141,16 +126,6 @@
       "img": "/landing/w2.jpg"
     },
     {
-      "title": "Demon Days",
-      "artist": "Gorillaz",
-      "year": 2005,
-      "genre": "Electronic",
-      "avg": 30.87,
-      "min": 25.45,
-      "forSale": 430,
-      "img": "/landing/w3.jpg"
-    },
-    {
       "title": "2012 - 2017",
       "artist": "Against All Logic",
       "year": 2018,
@@ -158,7 +133,7 @@
       "avg": 89.09,
       "min": 89.09,
       "forSale": 9,
-      "img": "/landing/w4.jpg"
+      "img": "/landing/w3.jpg"
     }
   ],
   "genres": [
@@ -181,28 +156,6 @@
     {
       "name": "Hip Hop",
       "count": 4
-    }
-  ],
-  "artists": [
-    {
-      "name": "The Beatles",
-      "count": 3
-    },
-    {
-      "name": "Pink Floyd",
-      "count": 2
-    },
-    {
-      "name": "Tame Impala",
-      "count": 2
-    },
-    {
-      "name": "Adele",
-      "count": 1
-    },
-    {
-      "name": "Beethoven - Berliner Philharmoniker • Herbert von Karajan",
-      "count": 1
     }
   ],
   "decades": [

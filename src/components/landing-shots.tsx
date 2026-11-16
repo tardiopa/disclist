@@ -3,7 +3,7 @@
 // Product previews for the landing page: the app's own building blocks, filled
 // with real albums (see scripts/build-landing-demo.mts). Decorative only.
 import type { ReactNode } from "react";
-import { ArrowUpRight, Check, Copy, Plus, Search } from "lucide-react";
+import { ArrowUpRight, Check, Plus, Search } from "lucide-react";
 import { LogoMark, Rarity } from "./bits";
 import { useI18n } from "@/lib/i18n";
 import demo from "@/lib/demo.json";
@@ -74,7 +74,7 @@ export function CollectionShot() {
 /** Discogs: search an album, import a whole collection. */
 export function DiscogsShot() {
   const { t } = useI18n();
-  const hits = [demo.grid[5], demo.grid[10], demo.grid[3]];
+  const hits = demo.search;
   return (
     <div className="relative pb-10 sm:pr-10">
       <Frame className="bg-raised">
@@ -146,85 +146,23 @@ export function WishlistShot() {
   );
 }
 
-function Switch({ on }: { on: boolean }) {
-  return (
-    <span className={`relative h-6 w-10 shrink-0 rounded-full ${on ? "bg-ink" : "bg-line"}`}>
-      <span className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-bg ${on ? "translate-x-4" : ""}`} />
-    </span>
-  );
-}
-
-/** Sharing: two independent switches, one link each. */
-export function ShareShot() {
+/** The dashboard: the collection by decade and by genre. */
+export function DashboardShot() {
   const { t } = useI18n();
+  const genreMax = demo.genres[0]?.count ?? 1;
+  const decadeMax = Math.max(1, ...demo.decades.map((d) => d.count));
   return (
-    <Frame className="px-5 py-2 sm:px-6">
-      <div className="flex min-h-16 items-center gap-3 border-b border-line">
-        <span className="flex-1">
-          {t("collection")}
-          <span className="label ml-3">{t("public")}</span>
-        </span>
-        <span className="hidden h-8 items-center gap-2 rounded-full border border-line px-3 text-[12.5px] sm:inline-flex">
-          <Copy size={13} />
-          {t("copyLink")}
-        </span>
-        <Switch on />
-      </div>
-      <div className="num flex h-11 items-center border-b border-line text-[12.5px] text-muted">disclist.app/u/k7m2p9xw4a</div>
-      <div className="flex min-h-16 items-center gap-3">
-        <span className="flex-1">
-          {t("wishlist")}
-          <span className="label ml-3">{t("private")}</span>
-        </span>
-        <Switch on={false} />
-      </div>
-    </Frame>
-  );
-}
+    <Frame className="px-5 pt-5 pb-6 sm:px-6">
+      <p className="text-[22px] leading-none font-semibold tracking-[-0.03em]">{t("dashboard")}</p>
 
-/* ---------- dashboard: three small visuals ---------- */
-
-export function GenresMini() {
-  const max = demo.genres[0]?.count ?? 1;
-  return (
-    <div aria-hidden className="w-full max-w-xs space-y-2.5">
-      {demo.genres.slice(0, 4).map((g) => (
-        <div key={g.name} className="grid items-center gap-3 text-[13px]" style={{ gridTemplateColumns: "6rem minmax(0, 1fr) 1.5rem" }}>
-          <span className="truncate">{g.name}</span>
-          <span className="block h-1.5">
-            <span className="block h-full rounded-r-[3px] bg-ink" style={{ width: `${(g.count / max) * 100}%` }} />
-          </span>
-          <span className="num text-right text-[12px] text-muted">{g.count}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-export function TopMini() {
-  const { money } = useI18n();
-  return (
-    <div aria-hidden className="w-full max-w-xs">
-      {demo.top.map((a, n) => (
-        <div key={a.img} className="flex items-center gap-3 border-b border-line py-2 last:border-0">
-          <span className="num w-3 text-[11.5px] text-faint">{n + 1}</span>
-          <Cover src={a.img} className="w-9 shrink-0 shadow-none" />
-          <span className="min-w-0 flex-1 truncate text-[13.5px] font-medium">{a.title}</span>
-          <span className="num text-[14px]">{money(a.avg)}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-export function DecadesMini() {
-  const max = Math.max(1, ...demo.decades.map((d) => d.count));
-  return (
-    <div aria-hidden className="w-full max-w-xs">
+      <p className="label mt-6">{t("decades")}</p>
       {/* Heights in pixels: percentage heights inside a flex row are unreliable across browsers. */}
-      <div className="flex items-end gap-2 border-b border-line">
+      <div className="mt-4 flex items-end gap-2 border-b border-line">
         {demo.decades.map((d) => (
-          <span key={d.decade} className="block flex-1 rounded-t-[3px] bg-ink" style={{ height: d.count ? Math.max(3, Math.round((d.count / max) * 84)) : 0 }} />
+          <span key={d.decade} className="flex flex-1 flex-col items-center">
+            <span className="num mb-1.5 text-[11px] text-muted">{d.count || ""}</span>
+            <span className="block w-full max-w-9 rounded-t-[3px] bg-ink" style={{ height: d.count ? Math.max(3, Math.round((d.count / decadeMax) * 96)) : 0 }} />
+          </span>
         ))}
       </div>
       <div className="mt-2 flex gap-2">
@@ -234,6 +172,19 @@ export function DecadesMini() {
           </span>
         ))}
       </div>
-    </div>
+
+      <p className="label mt-7">{t("topGenres")}</p>
+      <div className="mt-3.5 space-y-2.5">
+        {demo.genres.map((g) => (
+          <div key={g.name} className="grid items-center gap-3 text-[13px]" style={{ gridTemplateColumns: "6.5rem minmax(0, 1fr) 1.5rem" }}>
+            <span className="truncate">{g.name}</span>
+            <span className="block h-1.5">
+              <span className="block h-full rounded-r-[3px] bg-ink" style={{ width: `${(g.count / genreMax) * 100}%` }} />
+            </span>
+            <span className="num text-right text-[12px] text-muted">{g.count}</span>
+          </div>
+        ))}
+      </div>
+    </Frame>
   );
 }
