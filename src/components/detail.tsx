@@ -151,7 +151,7 @@ export function Detail({ target, onClose: unmount, morphed }: { target: DetailTa
 
   return (
     <div
-      className={`${morphed ? "" : "anim-fade"} fixed inset-0 z-50 overflow-y-auto bg-bg scroll-thin transition-opacity duration-300 ease-out ${closing ? "pointer-events-none opacity-0" : ""}`} role="dialog" aria-modal aria-label={title}>
+      className={`${morphed ? "" : "anim-fade"} fixed inset-0 z-50 overflow-y-auto bg-bg scroll-thin [scrollbar-gutter:stable] transition-opacity duration-300 ease-out ${closing ? "pointer-events-none opacity-0" : ""}`} role="dialog" aria-modal aria-label={title}>
       {/* Opaque bar pinned to the top edge, like the app header, so the
           browser chrome above it stays a plain colour. */}
       <div className="fixed inset-x-0 top-0 z-10 flex h-14 items-center justify-end bg-bg px-4 sm:px-6">
