@@ -17,6 +17,17 @@ export function pickSample(editions: Edition[], n: number): Edition[] {
 const round2 = (n: number) => Math.round(n * 100) / 100;
 
 /**
+ * The typical price is the median of the editions' lowest listings, not their
+ * mean: one collector pressing listed at 900 € must not triple the figure for
+ * an album anyone can buy at 30 €.
+ */
+function median(values: number[]): number {
+  const v = [...values].sort((a, b) => a - b);
+  const mid = v.length >> 1;
+  return v.length % 2 ? v[mid] : (v[mid - 1] + v[mid]) / 2;
+}
+
+/**
  * @param sample   editions that were priced, aligned with `markets`
  * @param fetched  every edition we know about (may be fewer than `versions`)
  * @param versions total vinyl editions on Discogs
@@ -43,7 +54,7 @@ export function aggregate(
   if (fetched.length && versions > fetched.length) forSale *= Math.min(versions / fetched.length, 3);
 
   return {
-    avg: prices.length ? round2(prices.reduce((s, p) => s + p, 0) / prices.length) : null,
+    avg: prices.length ? round2(median(prices)) : null,
     min: prices.length ? round2(Math.min(...prices)) : null,
     forSale: Math.round(forSale),
     versions: Math.max(versions, fetched.length),

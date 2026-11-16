@@ -57,6 +57,10 @@ test("stats", () => {
   assert.equal(s.forSale, 40); // 30 × 200/150
   const s2 = aggregate(sample, [{ lowest: 10, forSale: 1 }, { lowest: 31, forSale: 1 }], sample, 2, 7);
   assert.deepEqual([s2.avg, s2.min, s2.forSale], [20.5, 10, 2]);
+  // a collector pressing at 910 € does not drag the typical price up
+  const five = [ed(1, 9), ed(2, 8), ed(3, 7), ed(4, 6), ed(5, 5)];
+  const s3 = aggregate(five, [26, 24, 21, 910, 255].map((lowest) => ({ lowest, forSale: 1 })), five, 5, 7);
+  assert.deepEqual([s3.avg, s3.min], [26, 21]);
   const none = aggregate([], [], [], 0, 7);
   assert.deepEqual([none.avg, none.min, none.forSale], [null, null, 0]);
   assert.deepEqual([rarity(0), rarity(24), rarity(25), rarity(149), rarity(150), rarity(5000)], [3, 3, 2, 2, 1, 1]);

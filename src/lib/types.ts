@@ -2,7 +2,7 @@ export type ListName = "collection" | "wishlist";
 
 /** Market snapshot for one album, aggregated over its vinyl editions. */
 export interface Stats {
-  /** Mean of the lowest listing of each sampled vinyl edition (EUR). */
+  /** Typical price: median of the lowest listing of each sampled vinyl edition (EUR). */
   avg: number | null;
   /** Cheapest listing among sampled vinyl editions (EUR). */
   min: number | null;

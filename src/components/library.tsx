@@ -142,7 +142,8 @@ export function LibraryProvider({ children }: { children: ReactNode }) {
           const detail = await discogs.album(next, tokenRef.current, "low");
           const stats = await discogs.stats(detail, discogs.SAMPLE_QUICK, tokenRef.current, "low");
           // Keep a deeper, still-fresh sample rather than downgrade it.
-          const keep = next.stats && next.stats.sampled > stats.sampled && now - next.stats.updatedAt < STALE_MS;
+          const keep =
+            next.enriched === discogs.ALBUM_PASS && next.stats && next.stats.sampled > stats.sampled && now - next.stats.updatedAt < STALE_MS;
           await saveAlbum(next.key, detail, keep ? next.stats! : stats);
         } catch (e) {
           failed.current.add(next.key);

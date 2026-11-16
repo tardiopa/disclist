@@ -187,7 +187,7 @@ export function LibraryView({ list, items, title, onOpen, onRemove, empty, actio
               <>
                 <span className="hidden w-36 lg:block">{t("genre")}</span>
                 <span className="w-12 text-right">{t("year")}</span>
-                <span className="w-20 text-right">{t("average")}</span>
+                <span className="w-28 text-right">{t("average")}</span>
                 <span className="w-20 text-right">{t("lowest")}</span>
                 <span className="w-20 text-right">{t("forSale")}</span>
                 <span className="w-24 pl-2">{t("rarity")}</span>
@@ -215,7 +215,7 @@ export function LibraryView({ list, items, title, onOpen, onRemove, empty, actio
                 <>
                   <span className="hidden w-36 truncate text-[13px] text-muted lg:block">{i.genres.slice(0, 2).join(", ")}</span>
                   <span className="num hidden w-12 text-right text-[13px] text-muted md:block">{i.year ?? "—"}</span>
-                  <span className="num w-16 text-right text-[13px] md:w-20">{money(i.stats?.avg)}</span>
+                  <span className="num w-16 text-right text-[13px] md:w-28">{money(i.stats?.avg)}</span>
                   <span className="num hidden w-20 text-right text-[13px] text-muted md:block">{money(i.stats?.min)}</span>
                   <span className="num hidden w-20 text-right text-[13px] text-muted md:block">{i.stats?.versions ? count(i.stats.forSale) : "—"}</span>
                   <span className="hidden w-24 pl-2 text-[13px] md:block">

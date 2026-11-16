@@ -31,7 +31,8 @@ shares/{shareId}             { uid } — short public link → owner
 - `src/lib/discogs.ts` — read-only Discogs client (GET only). Calls api.discogs.com from the
   browser with the user's token; falls back to the `/api/discogs/*` relay if blocked. A queue
   keeps requests under 60/min, interactive calls first.
-- `src/lib/stats.ts` — average / lowest / rarity. Discogs has no sales history in its API, so
+- `src/lib/stats.ts` — typical price (median of the editions' lowest listings, so collector
+  pressings don't skew it) / lowest / rarity. Discogs has no sales history in its API, so
   figures are aggregated from `marketplace/stats` over the most-owned vinyl editions
   (6 in background pricing, 20 when a detail view is opened).
 - `src/lib/merge.ts` — import rules: add new, keep existing, never remove.

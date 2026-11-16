@@ -283,7 +283,7 @@ async function market(releaseId: number, token: string, priority: Priority): Pro
 }
 
 /** Bump to make every stored item refresh its album-level facts (see Item.enriched). */
-export const ALBUM_PASS = 2;
+export const ALBUM_PASS = 3;
 
 /** Quick pass used while pricing a whole library; the detail view goes deeper. */
 export const SAMPLE_QUICK = 6;

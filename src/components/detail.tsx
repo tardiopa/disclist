@@ -76,7 +76,8 @@ export function Detail({ target, onClose: unmount, morphed }: { target: DetailTa
         setDetail(d);
         setLoading(false);
         if (d.artistId) discogs.artist(d.artistId, token).then((a) => live && setArtist(a)).catch(() => {});
-        const stale = !known || Date.now() - known.updatedAt > FRESH_MS;
+        const outdated = "enriched" in base && base.enriched !== discogs.ALBUM_PASS;
+        const stale = !known || outdated || Date.now() - known.updatedAt > FRESH_MS;
         if (stale || discogs.canDeepen(known, discogs.SAMPLE_FULL)) {
           const s = await discogs.stats(d, discogs.SAMPLE_FULL, token, "high");
           if (!live) return;
@@ -154,14 +155,16 @@ export function Detail({ target, onClose: unmount, morphed }: { target: DetailTa
       className={`${morphed ? "" : "anim-fade"} fixed inset-0 z-50 overflow-y-auto bg-bg scroll-thin [scrollbar-gutter:stable] transition-opacity duration-300 ease-out ${closing ? "pointer-events-none opacity-0" : ""}`} role="dialog" aria-modal aria-label={title}>
       {/* Opaque bar pinned to the top edge, like the app header, so the
           browser chrome above it stays a plain colour. */}
-      <div className="fixed inset-x-0 top-0 z-10 flex h-14 items-center justify-end bg-bg px-4 sm:px-6">
-        <button
-          onClick={onClose}
-          aria-label="Close"
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-line hover:border-ink"
-        >
-          <X size={18} />
-        </button>
+      <div className="fixed inset-x-0 top-0 z-10 bg-bg [scrollbar-gutter:stable]">
+        <div className="mx-auto flex h-14 max-w-6xl items-center justify-end px-5 sm:px-8">
+          <button
+            onClick={onClose}
+            aria-label="Close"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-line hover:border-ink"
+          >
+            <X size={18} />
+          </button>
+        </div>
       </div>
 
       <div className="mx-auto grid max-w-6xl gap-10 px-5 pt-16 pb-24 sm:px-8 md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] md:gap-16 md:pt-24">
