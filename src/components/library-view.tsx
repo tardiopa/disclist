@@ -41,8 +41,10 @@ function Filter({ value, onChange, label, children }: { value: string; onChange:
 /**
  * Phones: true while the reader scrolls down the list, false as soon as they
  * scroll back up, so the pinned toolbar gives its three lines back to the
- * records. It never hides before it is pinned, nor while one of its controls
- * has the focus (typing in the search field shortens the page under the finger).
+ * records. It never hides before the records have scrolled up to the header
+ * (its own place in the page would show as an empty band), nor while one of its
+ * controls has the focus (typing in the search field shortens the page under
+ * the finger).
  */
 function useHiddenOnScrollDown(bar: RefObject<HTMLElement | null>): boolean {
   const [hidden, setHidden] = useState(false);
@@ -68,8 +70,10 @@ function useHiddenOnScrollDown(bar: RefObject<HTMLElement | null>): boolean {
       if (!down) {
         if (turn - y > 12) setHidden(false);
       } else if (y - turn > 24 && !el.contains(document.activeElement)) {
-        const pinned = el.getBoundingClientRect().top <= parseFloat(getComputedStyle(el).top) + 1;
-        if (pinned) setHidden(true);
+        // The bar keeps its place in the page while pinned: wait until what
+        // follows it has reached the header, so that place is out of sight.
+        const below = el.nextElementSibling?.getBoundingClientRect().top ?? Infinity;
+        if (below <= parseFloat(getComputedStyle(el).top) + 1) setHidden(true);
       }
     };
     window.addEventListener("scroll", onScroll, { passive: true });
