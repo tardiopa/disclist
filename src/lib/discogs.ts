@@ -33,10 +33,15 @@ const MAX_PER_WINDOW = 54;
 const MAX_LOW_PER_WINDOW = 44;
 const MAX_CONCURRENT = 3;
 
+/** Shared by every request of one piece of work, so it can be promoted while queued. */
+interface Rank {
+  level: Priority;
+}
+
 interface Job {
   path: string;
   token: string;
-  priority: Priority;
+  rank: Rank;
   signal?: AbortSignal;
   resolve: (v: any) => void;
   reject: (e: unknown) => void;
@@ -48,7 +53,9 @@ const stamps: number[] = [];
 let running = 0;
 let timer: ReturnType<typeof setTimeout> | null = null;
 let pausedUntil = 0;
-let useProxy = false;
+/** Direct calls are skipped until then: the relay answered where they could not. */
+let relayUntil = 0;
+const RELAY_MS = 10 * 60_000;
 
 function schedule(delay: number) {
   if (timer) return;
@@ -64,7 +71,7 @@ function pump() {
   if (now < pausedUntil) return schedule(pausedUntil - now);
 
   while (running < MAX_CONCURRENT && queue.length) {
-    let idx = queue.findIndex((j) => j.priority === "high");
+    let idx = queue.findIndex((j) => j.rank.level === "high");
     const cap = idx >= 0 ? MAX_PER_WINDOW : MAX_LOW_PER_WINDOW;
     if (idx < 0) idx = 0;
     if (stamps.length >= cap) {
@@ -86,7 +93,8 @@ function pump() {
 }
 
 async function send(job: Job): Promise<Response> {
-  if (!useProxy) {
+  const direct = Date.now() >= relayUntil;
+  if (direct) {
     try {
       return await fetch(`https://api.discogs.com${job.path}`, {
         headers: { Authorization: `Discogs token=${job.token}` },
@@ -94,14 +102,17 @@ async function send(job: Job): Promise<Response> {
       });
     } catch (e) {
       if ((e as Error)?.name === "AbortError") throw e;
-      // Blocked cross-origin (CORS, extension, network policy): go through our own relay.
-      useProxy = true;
     }
   }
-  return fetch(`/api/discogs${job.path}`, {
+  const res = await fetch(`/api/discogs${job.path}`, {
     headers: { "x-discogs-token": job.token },
     signal: job.signal,
   });
+  // The relay answered where the direct call failed: Discogs is blocked from this
+  // browser (CORS, extension, network policy), not merely offline. Stay on the
+  // relay for a while, then try direct again. Offline, both fail and nothing sticks.
+  if (direct) relayUntil = Date.now() + RELAY_MS;
+  return res;
 }
 
 async function run(job: Job) {
@@ -126,9 +137,10 @@ async function run(job: Job) {
   }
 }
 
-function get(path: string, token: string, priority: Priority = "high", signal?: AbortSignal): Promise<any> {
+function get(path: string, token: string, priority: Priority | Rank = "high", signal?: AbortSignal): Promise<any> {
+  const rank = typeof priority === "string" ? { level: priority } : priority;
   return new Promise((resolve, reject) => {
-    queue.push({ path, token, priority, signal, resolve, reject, tries: 0 });
+    queue.push({ path, token, rank, signal, resolve, reject, tries: 0 });
     pump();
   });
 }
@@ -168,7 +180,7 @@ export async function search(q: string, token: string, signal?: AbortSignal): Pr
 
 /* ---------- album ---------- */
 
-const albumCache = new Map<string, Promise<AlbumDetail>>();
+const albumCache = new Map<string, { promise: Promise<AlbumDetail>; rank: Rank }>();
 const VERSION_PAGES = 2;
 
 function primaryImage(images: any[] | undefined): { cover: string; thumb: string } {
@@ -176,7 +188,7 @@ function primaryImage(images: any[] | undefined): { cover: string; thumb: string
   return { cover: im?.uri ?? "", thumb: im?.uri150 ?? "" };
 }
 
-async function loadMaster(masterId: number, token: string, priority: Priority): Promise<AlbumDetail> {
+async function loadMaster(masterId: number, token: string, priority: Rank): Promise<AlbumDetail> {
   const versionsPath = (page: number) => `/masters/${masterId}/versions?format=Vinyl&per_page=100&page=${page}`;
   const [m, v1] = await Promise.all([
     get(`/masters/${masterId}`, token, priority),
@@ -205,7 +217,7 @@ async function loadMaster(masterId: number, token: string, priority: Priority): 
   };
 }
 
-async function loadRelease(releaseId: number, token: string, priority: Priority): Promise<AlbumDetail> {
+async function loadRelease(releaseId: number, token: string, priority: Rank): Promise<AlbumDetail> {
   const r = await get(`/releases/${releaseId}`, token, priority);
   const vinyl = isVinyl(r.formats);
   const f = r.formats?.[0];
@@ -243,13 +255,21 @@ export function album(
   priority: Priority = "high",
 ): Promise<AlbumDetail> {
   const key = albumKey(ids.masterId, ids.releaseId);
-  let p = albumCache.get(key);
-  if (!p) {
-    p = ids.masterId ? loadMaster(ids.masterId, token, priority) : loadRelease(ids.releaseId!, token, priority);
-    albumCache.set(key, p);
-    p.catch(() => albumCache.delete(key));
+  const hit = albumCache.get(key);
+  if (hit) {
+    // A detail view opened on an album that background pricing is still loading:
+    // its queued requests jump ahead instead of waiting for the background budget.
+    if (priority === "high" && hit.rank.level === "low") {
+      hit.rank.level = "high";
+      pump();
+    }
+    return hit.promise;
   }
-  return p;
+  const rank: Rank = { level: priority };
+  const promise = ids.masterId ? loadMaster(ids.masterId, token, rank) : loadRelease(ids.releaseId!, token, rank);
+  albumCache.set(key, { promise, rank });
+  promise.catch(() => albumCache.delete(key));
+  return promise;
 }
 
 const artistCache = new Map<number, Promise<ArtistInfo>>();

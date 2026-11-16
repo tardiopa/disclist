@@ -7,6 +7,7 @@ import { Spinner, Thumb } from "./bits";
 import { useLibrary } from "./library";
 import * as discogs from "@/lib/discogs";
 import { useI18n } from "@/lib/i18n";
+import { useScrollLock } from "@/lib/scroll-lock";
 import type { SearchHit } from "@/lib/types";
 
 /** Discogs search, one row per album on vinyl. Picking a row opens its detail. */
@@ -19,6 +20,7 @@ export function AddRecord({ onClose, onPick, hidden }: { onClose: () => void; on
   const [cursor, setCursor] = useState(0);
   const input = useRef<HTMLInputElement>(null);
   const token = link?.token;
+  useScrollLock();
 
   useEffect(() => {
     if (hidden) return;

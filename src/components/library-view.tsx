@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode, type RefObject } from "react";
 import { ArrowUpDown, ArrowUpRight, ChevronDown, LayoutGrid, Rows3, Search, X } from "lucide-react";
 import { Rarity, Sleeve, Thumb } from "./bits";
 import { marketUrl } from "@/lib/discogs";
@@ -38,6 +38,46 @@ function Filter({ value, onChange, label, children }: { value: string; onChange:
   );
 }
 
+/**
+ * Phones: true while the reader scrolls down the list, false as soon as they
+ * scroll back up, so the pinned toolbar gives its three lines back to the
+ * records. It never hides before it is pinned, nor while one of its controls
+ * has the focus (typing in the search field shortens the page under the finger).
+ */
+function useHiddenOnScrollDown(bar: RefObject<HTMLElement | null>): boolean {
+  const [hidden, setHidden] = useState(false);
+  useEffect(() => {
+    const position = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      // Clamped: the rubber band at either end of the page is not a change of direction.
+      return Math.min(Math.max(window.scrollY, 0), Math.max(max, 0));
+    };
+    let last = position();
+    let turn = last; // where the scroll last changed direction
+    let down = false;
+    const onScroll = () => {
+      const y = position();
+      if (y === last) return;
+      if (y > last !== down) {
+        down = y > last;
+        turn = last;
+      }
+      last = y;
+      const el = bar.current;
+      if (!el) return;
+      if (!down) {
+        if (turn - y > 12) setHidden(false);
+      } else if (y - turn > 24 && !el.contains(document.activeElement)) {
+        const pinned = el.getBoundingClientRect().top <= parseFloat(getComputedStyle(el).top) + 1;
+        if (pinned) setHidden(true);
+      }
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [bar]);
+  return hidden;
+}
+
 export function LibraryView({ list, items, title, onOpen, onRemove, empty, actions }: Props) {
   const { t, money, count } = useI18n();
   const isWishlist = list === "wishlist";
@@ -59,6 +99,8 @@ export function LibraryView({ list, items, title, onOpen, onRemove, empty, actio
   const set = (patch: Partial<Filters>) => setFilters((f) => ({ ...f, ...patch }));
   const filtered = !!(filters.q || filters.genre || filters.decade || filters.rarity);
   const asList = isWishlist || view === "list";
+  const bar = useRef<HTMLDivElement>(null);
+  const barHidden = useHiddenOnScrollDown(bar);
 
   const sorts: [Sort, string][] = [
     ["recent", t("sortRecent")],
@@ -83,7 +125,13 @@ export function LibraryView({ list, items, title, onOpen, onRemove, empty, actio
       </header>
 
       {items.length > 0 && (
-        <div className="sticky top-[100px] z-20 sm:top-14 -mx-5 flex flex-wrap items-center gap-2 border-y border-line bg-bg px-5 py-2.5 sm:-mx-8 sm:px-8">
+        <div
+          ref={bar}
+          // Pinned under the page header, whose height the page gives in --bar-top
+          // (one line by default). Phones: slides up behind that header while the
+          // reader scrolls down, and comes back when they scroll up or tab into it.
+          className={`sticky top-[var(--bar-top,3.5rem)] z-20 -mx-5 flex flex-wrap items-center gap-2 border-y border-line bg-bg px-5 py-2.5 transition-transform duration-300 ease-out sm:-mx-8 sm:px-8 ${barHidden ? "max-sm:not-focus-within:-translate-y-full" : ""}`}
+        >
           <label className="flex h-9 basis-full items-center gap-2 rounded-full border border-line pr-1 pl-3.5 transition-colors focus-within:border-ink sm:mr-auto sm:max-w-xs sm:flex-1 sm:basis-auto">
             <Search size={15} className="shrink-0 text-muted" />
             <input

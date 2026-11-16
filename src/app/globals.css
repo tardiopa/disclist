@@ -224,6 +224,9 @@ button:disabled {
    comes out in the detail view. */
 .tile {
   position: relative;
+  /* Keeps the cover's own z-index inside the tile, so a hovered tile is above
+     every resting one whatever their order. */
+  isolation: isolate;
 }
 
 @media (hover: hover) {

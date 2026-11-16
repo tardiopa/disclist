@@ -6,6 +6,7 @@ import { Confirm, Rarity, Sleeve, Spinner } from "./bits";
 import { useOptionalLibrary } from "./library";
 import * as discogs from "@/lib/discogs";
 import { useI18n } from "@/lib/i18n";
+import { useScrollLock } from "@/lib/scroll-lock";
 import type { AlbumDetail, ArtistInfo, Item, ListName, NewItem, SearchHit, Stats } from "@/lib/types";
 
 /** What the view opens on: a library entry, or a search hit not yet added. */
@@ -21,16 +22,7 @@ function useEscape(onClose: () => void) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
-    // Lock scrolling on the root element, not on <body>: locking <body> turns it
-    // into its own scroll container, and the sticky header underneath then
-    // jumps to the top of the document until the lock is released.
-    const root = document.documentElement;
-    const prev = root.style.overflow;
-    root.style.overflow = "hidden";
-    return () => {
-      window.removeEventListener("keydown", onKey);
-      root.style.overflow = prev;
-    };
+    return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
 }
 
@@ -40,16 +32,29 @@ export function Detail({ target, onClose: unmount, morphed }: { target: DetailTa
   // Closing is a plain fade of the whole view (same pace as switching screens);
   // the screen underneath is already painted, so nothing has to travel back.
   const [closing, setClosing] = useState(false);
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const onClose = useCallback(() => {
     setClosing(true);
-    setTimeout(unmount, CLOSE_MS);
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    closeTimer.current = setTimeout(unmount, CLOSE_MS);
   }, [unmount]);
+  // Clicks pass through the fading view, so another album (or this one again)
+  // can be opened before the fade ends: the pending close must not take it down.
+  useEffect(() => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    closeTimer.current = null;
+    setClosing(false);
+    return () => {
+      if (closeTimer.current) clearTimeout(closeTimer.current);
+    };
+  }, [target]);
 
   const { t, money, count } = useI18n();
   const lib = useOptionalLibrary();
   const token = lib?.link?.token;
   const { base, list } = target;
   useEscape(onClose);
+  useScrollLock();
 
   // Follow the live entry so edits (edition, prices) show immediately.
   const entry = useMemo<Item | null>(() => {

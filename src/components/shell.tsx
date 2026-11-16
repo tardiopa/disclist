@@ -119,7 +119,8 @@ export function Shell({ children }: { children: ReactNode }) {
         </nav>
       </header>
 
-      <main className="mx-auto max-w-[1500px] px-5 sm:px-8">
+      {/* --bar-top: where a screen pins its own toolbar, i.e. the header's height (two lines on phones). */}
+      <main className="mx-auto max-w-[1500px] px-5 [--bar-top:100px] sm:px-8 sm:[--bar-top:3.5rem]">
         {/* Re-mounted per screen so each one fades in the same way. */}
         <PageFade key={path}>{children}</PageFade>
       </main>

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { rarity } from "@/lib/stats";
 import { useI18n } from "@/lib/i18n";
+import { useScrollLock } from "@/lib/scroll-lock";
 import type { Key } from "@/lib/dict";
 import type { Stats } from "@/lib/types";
 
@@ -158,6 +159,7 @@ export function Confirm({
 }) {
   const { t } = useI18n();
   const cancel = useRef<HTMLButtonElement>(null);
+  useScrollLock();
   useEffect(() => {
     cancel.current?.focus();
     const onKey = (e: KeyboardEvent) => {

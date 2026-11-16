@@ -37,6 +37,9 @@ export const useLibrary = () => {
 export const useOptionalLibrary = () => useContext(Ctx);
 
 const STALE_MS = 30 * 24 * 3600 * 1000;
+/** Pause before pricing resumes after a failure that was not the album's fault. */
+const RETRY_MS = 30_000;
+const MAX_STRIKES = 3;
 const EMPTY: Stats = { avg: null, min: null, forSale: 0, versions: 0, sampled: 0, updatedAt: 0 };
 
 function needsPricing(i: Item, now: number): boolean {
@@ -103,17 +106,33 @@ export function LibraryProvider({ children }: { children: ReactNode }) {
   /* Background pricing: one album at a time, at low priority. */
   const token = link?.token;
   const failed = useRef(new Set<string>());
+  const strikes = useRef(new Map<string, number>());
   const working = useRef(false);
   const tokenRef = useRef(token);
   tokenRef.current = token;
 
+  /** The token Discogs refused; pricing waits for another one. */
+  const rejected = useRef<string | undefined>(undefined);
+  const [retry, setRetry] = useState(0);
+  const retryTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const alive = useRef(true);
   useEffect(() => {
     alive.current = true;
+    const again = () => setRetry((n) => n + 1);
+    window.addEventListener("online", again);
     return () => {
       alive.current = false;
+      window.removeEventListener("online", again);
+      if (retryTimer.current) clearTimeout(retryTimer.current);
     };
   }, []);
+
+  // A new token gets a clean slate: albums that failed on the old one are tried again.
+  useEffect(() => {
+    failed.current.clear();
+    strikes.current.clear();
+  }, [token]);
 
   const queued = useCallback(() => {
     const now = Date.now();
@@ -125,12 +144,17 @@ export function LibraryProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    const size = token ? queued() : 0;
+    if (working.current) return;
+    const size = token && token !== rejected.current ? queued() : 0;
     setPending(size);
-    if (!token || !size || working.current) return;
+    if (!size) return;
     working.current = true;
+    if (retryTimer.current) clearTimeout(retryTimer.current);
+    retryTimer.current = null;
 
     (async () => {
+      // Set when the run stops on something other than the album itself.
+      let stalled = false;
       while (alive.current && tokenRef.current) {
         const now = Date.now();
         const all = [...lists.current.collection, ...lists.current.wishlist];
@@ -138,27 +162,44 @@ export function LibraryProvider({ children }: { children: ReactNode }) {
           all.find((i) => !i.stats && !failed.current.has(i.key)) ??
           all.find((i) => needsPricing(i, now) && !failed.current.has(i.key));
         if (!next) break;
+        const used = tokenRef.current;
         try {
-          const detail = await discogs.album(next, tokenRef.current, "low");
-          const stats = await discogs.stats(detail, discogs.SAMPLE_QUICK, tokenRef.current, "low");
-          // Keep a deeper, still-fresh sample rather than downgrade it.
-          const keep =
-            next.enriched === discogs.ALBUM_PASS && next.stats && next.stats.sampled > stats.sampled && now - next.stats.updatedAt < STALE_MS;
-          await saveAlbum(next.key, detail, keep ? next.stats! : stats);
+          const detail = await discogs.album(next, used, "low");
+          // Another copy of this album already has a fresh price (possibly from a
+          // deeper sample taken by the detail view): share it rather than replace it.
+          const priced = all.find((i) => i.key === next.key && i.stats && !needsPricing(i, now));
+          const stats = priced?.stats ?? (await discogs.stats(detail, discogs.SAMPLE_QUICK, used, "low"));
+          await saveAlbum(next.key, detail, stats);
         } catch (e) {
-          failed.current.add(next.key);
           const status = (e as discogs.DiscogsError)?.status;
+          // Bad token or no answer at all (offline): not this album's fault, so
+          // it stays in the queue and the run stops. An album that keeps failing
+          // without an answer is given up on, so it cannot block the others.
+          const strike = status ? 0 : (strikes.current.get(next.key) ?? 0) + 1;
+          strikes.current.set(next.key, strike);
+          if (status === 401 || (!status && strike < MAX_STRIKES)) {
+            if (status === 401) rejected.current = used;
+            stalled = true;
+            break;
+          }
+          failed.current.add(next.key);
           if (status === 404) await saveAlbum(next.key, null, { ...EMPTY, updatedAt: Date.now() }).catch(() => {});
-          else if (status === 401 || !status) break; // bad token or offline: stop until something changes
         }
         // Let the snapshot land before picking the next one.
         await new Promise((r) => setTimeout(r, 200));
         if (alive.current) setPending(queued());
       }
       working.current = false;
-      if (alive.current) setPending(tokenRef.current ? queued() : 0);
+      if (!alive.current) return;
+      const current = tokenRef.current;
+      if (!current || current === rejected.current) return setPending(0);
+      if (!stalled) return setPending(queued());
+      // Nothing is running: no spinner. Try again shortly, or as soon as the
+      // connection is back (see the "online" listener).
+      setPending(0);
+      retryTimer.current = setTimeout(() => setRetry((n) => n + 1), RETRY_MS);
     })();
-  }, [token, collection, wishlist, saveAlbum, queued]);
+  }, [token, collection, wishlist, saveAlbum, queued, retry]);
 
   const value = useMemo<Library>(
     () => ({
