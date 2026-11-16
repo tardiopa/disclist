@@ -36,7 +36,7 @@ export function CollectionShot() {
     <Frame>
       <div className="flex h-12 items-center gap-6 border-b border-line px-5 sm:px-7">
         <span className="inline-flex items-center gap-2 text-[15px] font-semibold tracking-[-0.03em]">
-          <LogoMark className="h-[0.94em] w-[1.31em]" />
+          <LogoMark className="h-[1.24em] w-[1.73em]" />
           Disclist
         </span>
         <span className="hidden gap-5 text-[13px] text-muted sm:flex">

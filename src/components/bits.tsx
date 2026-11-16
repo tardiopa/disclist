@@ -22,9 +22,9 @@ export function LogoMark({ className = "" }: { className?: string }) {
 export function Logo({ className = "" }: { className?: string }) {
   return (
     <span className={`inline-flex items-center gap-[0.42em] leading-none font-semibold tracking-[-0.03em] ${className}`}>
-      {/* Sized in em with an explicit width, and nudged up so it centres on
-          the capitals of the wordmark rather than on the full line box. */}
-      <LogoMark className="relative -top-[0.045em] h-[0.94em] w-[1.31em]" />
+      {/* Taller than the letters and centred on them, so it overhangs the
+          text equally above the capitals and below the baseline. */}
+      <LogoMark className="h-[1.24em] w-[1.73em]" />
       Disclist
     </span>
   );
