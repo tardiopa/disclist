@@ -123,6 +123,10 @@ node scripts/build-landing-demo.mts   # rebuilds the landing page demo from a Di
   It is sent to Discogs, or to the relay when direct access is blocked, and nowhere else.
 - No secrets are committed. `.env*` files are ignored, except `.env.example`.
 
+## License
+
+[MIT](LICENSE) for the code. It does not cover the album covers in `public/landing/`.
+
 ## Credits
 
 Album data, cover art, and marketplace figures come from the Discogs API. The covers in
