@@ -121,14 +121,17 @@ test("dashboard summary", () => {
       item({ id: "a", year: 1969, genres: ["Rock"], stats: st(30) }),
       item({ id: "b", year: 1998, genres: ["Electronic", "Rock"], stats: st(80.4) }),
       item({ id: "c", year: null, genres: [], stats: null }),
+      item({ id: "d", key: "m2", stats: st(50) }),
+      item({ id: "e", key: "m2", stats: st(50) }),
+      item({ id: "f", key: "m3", stats: st(5) }),
     ],
     [item({ id: "w", stats: st(25) }), item({ id: "x", stats: st(null) })],
   );
-  assert.deepEqual([s.collectionCount, s.collectionPriced, s.collectionValue], [3, 2, 110]);
+  assert.deepEqual([s.collectionCount, s.collectionPriced, s.collectionValue], [6, 5, 215]);
   assert.deepEqual([s.wishlistCount, s.wishlistPriced, s.wishlistCost], [2, 1, 25]);
-  assert.equal(s.top?.id, "b");
+  assert.deepEqual(s.top.map((i) => i.id), ["b", "d", "a"]); // second copy of m2 does not take a slot
   assert.deepEqual(s.genres, [{ name: "Rock", count: 2 }, { name: "Electronic", count: 1 }]);
-  assert.deepEqual(s.artists, [{ name: "A", count: 3 }]);
+  assert.deepEqual(s.artists, [{ name: "A", count: 6 }]);
   assert.deepEqual(s.decades.map((d) => `${d.decade}:${d.count}`), ["1960:1", "1970:0", "1980:0", "1990:1"]);
 });
 

@@ -48,23 +48,30 @@ export default function DashboardPage() {
       </dl>
 
       <div className="grid gap-x-16 gap-y-14 pt-12 lg:grid-cols-2">
-        {s.top && (
+        {s.top.length > 0 && (
           <section className="lg:col-span-2">
             <h2 className="label">{t("mostValuable")}</h2>
-            <button
-              onClick={() => openDetail({ base: s.top!, list: "collection" })}
-              className="mt-4 flex w-full items-center gap-5 border-y border-line py-4 text-left transition-colors hover:bg-surface"
-            >
-              <Thumb src={s.top.cover || s.top.thumb} alt="" size={88} />
-              <span className="min-w-0 flex-1">
-                <span className="block truncate text-xl font-medium tracking-tight sm:text-2xl">{s.top.title}</span>
-                <span className="block truncate text-muted">
-                  {s.top.artist}
-                  {s.top.year ? ` · ${s.top.year}` : ""}
-                </span>
-              </span>
-              <span className="num text-2xl font-medium tracking-[-0.04em] sm:text-[32px]">{money(s.top.stats?.avg)}</span>
-            </button>
+            <ol className="mt-4 border-t border-line">
+              {s.top.map((item, n) => (
+                <li key={item.id} className="border-b border-line">
+                  <button
+                    onClick={() => openDetail({ base: item, list: "collection" })}
+                    className="flex w-full items-center gap-4 py-3.5 text-left transition-colors hover:bg-surface sm:gap-5"
+                  >
+                    <span className="num w-5 text-[13px] text-faint">{n + 1}</span>
+                    <Thumb src={item.cover || item.thumb} alt="" size={n === 0 ? 72 : 56} />
+                    <span className="min-w-0 flex-1">
+                      <span className={`block truncate font-medium tracking-tight ${n === 0 ? "text-xl sm:text-2xl" : "text-[17px]"}`}>{item.title}</span>
+                      <span className="block truncate text-muted">
+                        {item.artist}
+                        {item.year ? ` · ${item.year}` : ""}
+                      </span>
+                    </span>
+                    <span className={`num font-medium tracking-[-0.04em] ${n === 0 ? "text-2xl sm:text-[32px]" : "text-xl"}`}>{money(item.stats?.avg)}</span>
+                  </button>
+                </li>
+              ))}
+            </ol>
           </section>
         )}
 

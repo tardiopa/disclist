@@ -8,7 +8,8 @@ export interface Summary {
   collectionPriced: number;
   wishlistCost: number;
   wishlistPriced: number;
-  top: Item | null;
+  /** The three most valuable albums of the collection (one entry per album). */
+  top: Item[];
   genres: { name: string; count: number }[];
   artists: { name: string; count: number }[];
   /** Every decade between the first and the last, gaps included. */
@@ -38,6 +39,12 @@ export function summarize(collection: Item[], wishlist: Item[]): Summary {
     for (let d = Math.min(...keys); d <= Math.max(...keys); d += 10) decades.push({ decade: d, count: decadeCount.get(d) ?? 0 });
   }
 
+  const seen = new Set<string>();
+  const top = [...cp]
+    .sort((a, b) => b.stats!.avg! - a.stats!.avg!)
+    .filter((i) => !seen.has(i.key) && !!seen.add(i.key))
+    .slice(0, 3);
+
   const top10 = (m: Map<string, number>) =>
     [...m.entries()]
       .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
@@ -51,7 +58,7 @@ export function summarize(collection: Item[], wishlist: Item[]): Summary {
     collectionPriced: cp.length,
     wishlistCost: sum(wp),
     wishlistPriced: wp.length,
-    top: cp.reduce<Item | null>((best, i) => (!best || i.stats!.avg! > best.stats!.avg! ? i : best), null),
+    top,
     genres: top10(genreCount),
     artists: top10(artistCount),
     decades,
