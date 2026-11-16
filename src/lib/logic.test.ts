@@ -118,7 +118,7 @@ test("dashboard summary", () => {
   const st = (avg: number | null) => ({ avg, min: avg, forSale: 1, versions: 1, sampled: 1, updatedAt: 0 });
   const s = summarize(
     [
-      item({ id: "a", year: 1969, genres: ["Rock"], stats: st(30) }),
+      item({ id: "a", key: "m4", year: 1969, genres: ["Rock"], stats: st(30) }),
       item({ id: "b", year: 1998, genres: ["Electronic", "Rock"], stats: st(80.4) }),
       item({ id: "c", year: null, genres: [], stats: null }),
       item({ id: "d", key: "m2", stats: st(50) }),
