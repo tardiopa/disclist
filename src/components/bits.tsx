@@ -6,14 +6,21 @@ import { useI18n } from "@/lib/i18n";
 import type { Key } from "@/lib/dict";
 import type { Stats } from "@/lib/types";
 
+/** A sleeve with its record sliding out — the gesture the app is built around. */
+export function LogoMark({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 39 28" className={`shrink-0 overflow-visible ${className}`} aria-hidden>
+      <circle cx="27" cy="14" r="11" fill="var(--accent)" />
+      <circle cx="27" cy="14" r="2" fill="var(--bg)" />
+      <rect x="1" y="1" width="22" height="26" rx="2.6" fill="currentColor" />
+    </svg>
+  );
+}
+
 export function Logo({ className = "" }: { className?: string }) {
   return (
-    <span className={`inline-flex items-center gap-2 font-semibold tracking-tight ${className}`}>
-      <svg viewBox="0 0 20 20" className="h-[1.05em] w-[1.05em] shrink-0 overflow-visible" aria-hidden>
-        <circle cx="10" cy="10" r="9.5" fill="currentColor" />
-        <circle cx="10" cy="10" r="3.6" fill="var(--accent)" />
-        <circle cx="10" cy="10" r="0.9" fill="var(--bg)" />
-      </svg>
+    <span className={`inline-flex items-center gap-[0.42em] leading-none font-semibold tracking-[-0.03em] ${className}`}>
+      <LogoMark className="h-[1.12em] w-auto" />
       Disclist
     </span>
   );
