@@ -319,8 +319,14 @@ export function Detail({ target, onClose: unmount, morphed }: { target: DetailTa
                         <span className="block truncate text-[13px] text-muted">{[e.country, e.format].filter(Boolean).join(" · ")}</span>
                       </span>
                       {ownedIds.has(e.id) && (
-                        <span className="label shrink-0 cursor-help text-ink" title={t("markYours")}>
-                          {t("yours")}
+                        <span className="group/tip relative shrink-0">
+                          <span className="label text-ink">{t("yours")}</span>
+                          <span
+                            role="tooltip"
+                            className="pointer-events-none absolute right-0 bottom-full z-10 mb-2 w-max max-w-64 translate-y-1 rounded-md bg-ink px-2.5 py-1.5 text-[12.5px] leading-snug text-bg opacity-0 shadow-lg transition duration-150 group-hover/tip:translate-y-0 group-hover/tip:opacity-100"
+                          >
+                            {t("markYours")}
+                          </span>
                         </span>
                       )}
                       <ArrowUpRight size={15} className="mr-1 shrink-0 text-faint group-hover:text-ink" />
