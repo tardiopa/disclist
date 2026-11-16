@@ -103,20 +103,26 @@ export function Shell({ children }: { children: ReactNode }) {
             </Link>
           </div>
         </div>
+        {/* Phones: the tabs sit on their own line under the logo. */}
+        <nav className="flex h-11 items-stretch gap-6 border-t border-line px-5 sm:hidden">
+          {TABS.map(([href, key]) => (
+            <Link
+              key={href}
+              href={href}
+              aria-current={path === href ? "page" : undefined}
+              className={`relative flex items-center text-[14px] whitespace-nowrap ${path === href ? "font-medium text-ink" : "text-muted"}`}
+            >
+              {t(key)}
+              {path === href && <span className="absolute inset-x-0 -bottom-px h-px bg-ink" />}
+            </Link>
+          ))}
+        </nav>
       </header>
 
-      <main className="mx-auto max-w-[1500px] px-5 pb-20 sm:px-8 sm:pb-0">
+      <main className="mx-auto max-w-[1500px] px-5 sm:px-8">
         {/* Re-mounted per screen so each one fades in the same way. */}
         <PageFade key={path}>{children}</PageFade>
       </main>
-
-      <nav className="fixed inset-x-0 bottom-0 z-30 flex border-t border-line bg-bg/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-md sm:hidden">
-        {TABS.map(([href, key]) => (
-          <Link key={href} href={href} className={`flex h-13 flex-1 items-center justify-center text-[13px] ${path === href ? "font-medium text-ink" : "text-muted"}`}>
-            {t(key)}
-          </Link>
-        ))}
-      </nav>
 
       {adding && (
         <AddRecord
