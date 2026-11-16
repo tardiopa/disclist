@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Search, X } from "lucide-react";
+import { Check, Search, X } from "lucide-react";
 import { Spinner, Thumb } from "./bits";
 import { useLibrary } from "./library";
 import * as discogs from "@/lib/discogs";
@@ -75,7 +75,7 @@ export function AddRecord({ onClose, onPick, hidden }: { onClose: () => void; on
 
   return (
     <div className={`fixed inset-0 z-40 ${hidden ? "invisible" : ""}`} role="dialog" aria-modal aria-label={t("add")}>
-      <div className="anim-fade absolute inset-0 bg-ink/25 backdrop-blur-[2px] dark:bg-black/60" onClick={onClose} />
+      <div className="anim-fade absolute inset-0 bg-scrim backdrop-blur-[2px]" onClick={onClose} />
       <div className="anim-drop relative mx-auto mt-0 flex max-h-dvh w-full max-w-xl flex-col overflow-hidden bg-raised shadow-2xl sm:mt-[12vh] sm:max-h-[70vh] sm:rounded-xl sm:border sm:border-line">
         {token ? (
           <>
@@ -115,8 +115,15 @@ export function AddRecord({ onClose, onPick, hidden }: { onClose: () => void; on
                           <span className="block truncate font-medium">{h.title}</span>
                           <span className="block truncate text-[13px] text-muted">{h.artist}</span>
                         </span>
-                        {(owned.has(h.key) || wished.has(h.key)) && (
-                          <span className="label shrink-0">{owned.has(h.key) ? t("inCollection") : t("inWishlist")}</span>
+                        {owned.has(h.key) ? (
+                          <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-ink px-2.5 py-1 text-[11.5px] font-medium text-bg">
+                            <Check size={12} />
+                            {t("collection")}
+                          </span>
+                        ) : (
+                          wished.has(h.key) && (
+                            <span className="shrink-0 rounded-full border border-line px-2.5 py-1 text-[11.5px] text-muted">{t("wishlist")}</span>
+                          )
                         )}
                         <span className="num w-10 shrink-0 text-right text-[12px] text-faint">{h.year ?? ""}</span>
                       </button>

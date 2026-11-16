@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { rarity } from "@/lib/stats";
 import { useI18n } from "@/lib/i18n";
 import type { Key } from "@/lib/dict";
@@ -68,20 +68,16 @@ export function rarityKey(stats: Stats): Key {
   return `rarity${rarity(stats.forSale)}` as Key;
 }
 
-/** Five ticks; the more filled, the harder to find. */
-export function Rarity({ stats, withLabel }: { stats: Stats | null; withLabel?: boolean }) {
+const RARITY_DOT = ["", "bg-faint", "bg-amber", "bg-accent"];
+
+/** Plain word plus a colour cue: grey = common, amber = rare, red = very rare. */
+export function Rarity({ stats }: { stats: Stats | null }) {
   const { t } = useI18n();
   if (!stats || !stats.versions) return <span className="text-faint">—</span>;
-  const level = rarity(stats.forSale);
-  const label = t(rarityKey(stats));
   return (
-    <span className="inline-flex items-center gap-2" title={label}>
-      <span className="inline-flex gap-[3px]" aria-hidden>
-        {[1, 2, 3, 4, 5].map((n) => (
-          <span key={n} className={`h-3 w-[3px] rounded-full ${n <= level ? (level >= 4 ? "bg-accent" : "bg-ink") : "bg-line"}`} />
-        ))}
-      </span>
-      {withLabel ? <span>{label}</span> : <span className="sr-only">{label}</span>}
+    <span className="inline-flex items-center gap-2 whitespace-nowrap">
+      <span className={`h-2 w-2 shrink-0 rounded-full ${RARITY_DOT[rarity(stats.forSale)]}`} aria-hidden />
+      {t(rarityKey(stats))}
     </span>
   );
 }
@@ -107,5 +103,50 @@ export function Toggle({ on, onChange, label }: { on: boolean; onChange: (v: boo
     >
       <span className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-bg transition-transform ${on ? "translate-x-4" : ""}`} />
     </button>
+  );
+}
+
+/** Blocking confirmation for destructive actions. */
+export function Confirm({
+  title,
+  text,
+  action,
+  onConfirm,
+  onCancel,
+}: {
+  title: string;
+  text?: ReactNode;
+  action: string;
+  onConfirm: () => void;
+  onCancel: () => void;
+}) {
+  const { t } = useI18n();
+  const cancel = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    cancel.current?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return;
+      e.stopImmediatePropagation();
+      onCancel();
+    };
+    window.addEventListener("keydown", onKey, true);
+    return () => window.removeEventListener("keydown", onKey, true);
+  }, [onCancel]);
+  return (
+    <div className="fixed inset-0 z-[60] flex items-end justify-center p-4 sm:items-center" role="alertdialog" aria-modal aria-label={title}>
+      <div className="anim-fade absolute inset-0 bg-scrim backdrop-blur-[2px]" onClick={onCancel} />
+      <div className="anim-rise relative w-full max-w-sm rounded-xl border border-line bg-raised p-6 shadow-2xl">
+        <h2 className="text-lg font-medium tracking-tight">{title}</h2>
+        {text && <p className="mt-1.5 text-muted">{text}</p>}
+        <div className="mt-6 flex justify-end gap-2">
+          <button ref={cancel} className="btn btn-ghost" onClick={onCancel}>
+            {t("cancel")}
+          </button>
+          <button className="btn bg-accent text-white hover:opacity-90" onClick={onConfirm}>
+            {action}
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }

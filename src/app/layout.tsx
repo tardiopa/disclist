@@ -21,6 +21,9 @@ export const viewport: Viewport = {
   ],
 };
 
+// Runs before paint so a forced light/dark theme never flashes.
+const themeScript = `try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}`;
+
 async function detectLang(): Promise<Lang> {
   const saved = (await cookies()).get("lang")?.value;
   if (saved === "fr" || saved === "en") return saved;
@@ -31,7 +34,10 @@ async function detectLang(): Promise<Lang> {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const lang = await detectLang();
   return (
-    <html lang={lang} className={`${grotesk.variable} ${plex.variable}`}>
+    <html lang={lang} className={`${grotesk.variable} ${plex.variable}`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body>
         <I18nProvider initial={lang}>
           <AuthProvider>{children}</AuthProvider>

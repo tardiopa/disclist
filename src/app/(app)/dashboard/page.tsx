@@ -28,7 +28,6 @@ export default function DashboardPage() {
       note: s.wishlistPriced < s.wishlistCount ? `${count(s.wishlistPriced)}/${count(s.wishlistCount)} ${t("pricedOf")}` : undefined,
     },
   ];
-  const genreMax = s.genres[0]?.count ?? 1;
   const decadeMax = Math.max(1, ...s.decades.map((d) => d.count));
 
   return (
@@ -69,32 +68,40 @@ export default function DashboardPage() {
           </section>
         )}
 
-        {s.genres.length > 0 && (
-          <section>
-            <h2 className="label">{t("topGenres")}</h2>
-            <ul className="mt-5 space-y-3.5">
-              {s.genres.map((g) => (
-                <li key={g.name} className="grid grid-cols-[minmax(0,9rem)_1fr_2.5rem] items-center gap-4" title={`${g.name}: ${g.count}`}>
-                  <span className="truncate text-[14px]">{g.name}</span>
-                  <span className="h-2">
-                    <span className="block h-full min-w-1 rounded-r-[4px] bg-ink" style={{ width: `${(g.count / genreMax) * 100}%` }} />
-                  </span>
-                  <span className="num text-right text-[13px] text-muted">{count(g.count)}</span>
-                </li>
-              ))}
-            </ul>
-          </section>
+        {(
+          [
+            [t("topGenres"), s.genres],
+            [t("topArtists"), s.artists],
+          ] as const
+        ).map(
+          ([heading, rows]) =>
+            rows.length > 0 && (
+              <section key={heading}>
+                <h2 className="label">{heading}</h2>
+                <ul className="mt-5 space-y-3.5">
+                  {rows.map((g) => (
+                    <li key={g.name} className="grid grid-cols-[minmax(0,10rem)_1fr_2.5rem] items-center gap-4" title={`${g.name}: ${g.count}`}>
+                      <span className="truncate text-[14px]">{g.name}</span>
+                      <span className="h-2">
+                        <span className="block h-full min-w-1 rounded-r-[4px] bg-ink" style={{ width: `${(g.count / rows[0].count) * 100}%` }} />
+                      </span>
+                      <span className="num text-right text-[13px] text-muted">{count(g.count)}</span>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ),
         )}
 
         {s.decades.length > 0 && (
-          <section>
+          <section className="lg:col-span-2">
             <h2 className="label">{t("decades")}</h2>
             <ol className="mt-5 flex h-56 items-stretch gap-[6px] border-b border-line">
               {s.decades.map((d) => (
                 <li key={d.decade} className="group relative flex min-w-0 flex-1 flex-col justify-end" title={`${d.decade}s: ${d.count}`}>
                   <span className="num mb-1.5 text-center text-[12px] text-muted">{d.count ? count(d.count) : ""}</span>
                   <span
-                    className="mx-auto block w-full max-w-9 rounded-t-[4px] bg-ink transition-opacity group-hover:opacity-70"
+                    className="mx-auto block w-full max-w-14 rounded-t-[4px] bg-ink transition-opacity group-hover:opacity-70"
                     style={{ height: `${(d.count / decadeMax) * 82}%`, minHeight: d.count ? 2 : 0 }}
                   />
                 </li>

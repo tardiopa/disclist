@@ -1,4 +1,5 @@
 // Filtering and sorting for the collection / wishlist views.
+import { rarity } from "./stats.ts";
 import type { Item } from "./types.ts";
 
 export type Sort = "recent" | "artist" | "title" | "yearDesc" | "yearAsc" | "priceDesc" | "priceAsc";
@@ -7,6 +8,8 @@ export interface Filters {
   q: string;
   genre: string;
   decade: string;
+  /** "" or a rarity level ("1" | "2" | "3"). */
+  rarity: string;
   sort: Sort;
 }
 
@@ -41,6 +44,7 @@ export function applyFilters(items: Item[], f: Filters): Item[] {
   const out = items.filter((i) => {
     if (f.genre && !i.genres.includes(f.genre)) return false;
     if (decade != null && decadeOf(i.year) !== decade) return false;
+    if (f.rarity && (!i.stats?.versions || String(rarity(i.stats.forSale)) !== f.rarity)) return false;
     if (!words.length) return true;
     const hay = fold(`${i.title} ${i.artist} ${i.year ?? ""} ${i.genres.join(" ")} ${i.styles.join(" ")}`);
     return words.every((w) => hay.includes(w));

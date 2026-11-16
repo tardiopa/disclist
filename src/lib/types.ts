@@ -36,8 +36,11 @@ export interface Item {
   genres: string[];
   styles: string[];
   stats: Stats | null;
-  /** True once year/genres come from the master rather than one edition. */
-  enriched?: boolean;
+  /**
+   * Version of the album-level pass (year, genres, artwork from the master
+   * rather than one edition). Older or missing → the item is refreshed.
+   */
+  enriched?: boolean | number;
   addedAt: number;
 }
 

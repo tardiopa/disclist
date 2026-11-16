@@ -52,13 +52,11 @@ export function aggregate(
   };
 }
 
-/** 1 = everywhere … 5 = nearly impossible to find. */
-export type RarityLevel = 1 | 2 | 3 | 4 | 5;
+/** 1 = common, 2 = rare, 3 = very rare — by vinyl copies currently for sale. */
+export type RarityLevel = 1 | 2 | 3;
 
 export function rarity(forSale: number): RarityLevel {
-  if (forSale < 10) return 5;
-  if (forSale < 50) return 4;
-  if (forSale < 200) return 3;
-  if (forSale < 1000) return 2;
+  if (forSale < 25) return 3;
+  if (forSale < 150) return 2;
   return 1;
 }

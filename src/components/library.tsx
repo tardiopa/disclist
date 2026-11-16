@@ -40,7 +40,7 @@ const STALE_MS = 30 * 24 * 3600 * 1000;
 const EMPTY: Stats = { avg: null, min: null, forSale: 0, versions: 0, sampled: 0, updatedAt: 0 };
 
 function needsPricing(i: Item, now: number): boolean {
-  return !i.stats || !i.enriched || now - i.stats.updatedAt > STALE_MS;
+  return !i.stats || i.enriched !== discogs.ALBUM_PASS || now - i.stats.updatedAt > STALE_MS;
 }
 
 export function LibraryProvider({ children }: { children: ReactNode }) {
@@ -82,7 +82,7 @@ export function LibraryProvider({ children }: { children: ReactNode }) {
         ...wishlist.filter((i) => i.key === key).map((i) => ({ list: "wishlist" as const, id: i.id, item: i })),
       ];
       if (!targets.length) return;
-      const patch: Partial<NewItem> = { stats, enriched: true };
+      const patch: Partial<NewItem> = { stats, enriched: discogs.ALBUM_PASS };
       if (detail) {
         // The album, not the edition, is the unit: take its canonical facts.
         if (detail.title) patch.title = detail.title;
@@ -91,8 +91,9 @@ export function LibraryProvider({ children }: { children: ReactNode }) {
         if (detail.year) patch.year = detail.year;
         if (detail.genres.length) patch.genres = detail.genres;
         if (detail.styles.length) patch.styles = detail.styles;
-        if (detail.cover && targets.some((t) => !t.item.cover)) patch.cover = detail.cover;
-        if (detail.thumb && targets.some((t) => !t.item.thumb)) patch.thumb = detail.thumb;
+        // Album artwork beats the photo of one particular pressing.
+        if (detail.cover) patch.cover = detail.cover;
+        if (detail.thumb) patch.thumb = detail.thumb;
       }
       await store.patchMany(uid, targets, patch);
     },

@@ -9,13 +9,16 @@
   --faint: #a8a39a;
   --line: #dcd8cf;
   --accent: #d9442a;
-  --wax: #141312;
+  --amber: #c98a1b;
+  --scrim: rgb(24 23 21 / 0.28);
+  --wax-ring: transparent;
   --shadow: 28 24 18;
   color-scheme: light;
 }
 
+/* Dark: by system preference unless the user forced light, or forced dark. */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --bg: #100f0e;
     --surface: #181716;
     --raised: #1f1e1c;
@@ -24,16 +27,28 @@
     --faint: #5f5b55;
     --line: #2b2927;
     --accent: #ff6b47;
-    --wax: #050505;
+    --amber: #e0a83a;
+    --scrim: rgb(0 0 0 / 0.62);
+    --wax-ring: rgb(255 255 255 / 0.09);
     --shadow: 0 0 0;
     color-scheme: dark;
   }
+}
 
-  .wax {
-    box-shadow:
-      0 0 0 1px rgb(255 255 255 / 0.09),
-      0 2px 10px -2px rgb(0 0 0 / 0.6);
-  }
+:root[data-theme="dark"] {
+  --bg: #100f0e;
+  --surface: #181716;
+  --raised: #1f1e1c;
+  --ink: #ebe8e1;
+  --muted: #8d887f;
+  --faint: #5f5b55;
+  --line: #2b2927;
+  --accent: #ff6b47;
+  --amber: #e0a83a;
+  --scrim: rgb(0 0 0 / 0.62);
+  --wax-ring: rgb(255 255 255 / 0.09);
+  --shadow: 0 0 0;
+  color-scheme: dark;
 }
 
 @theme inline {
@@ -45,6 +60,8 @@
   --color-faint: var(--faint);
   --color-line: var(--line);
   --color-accent: var(--accent);
+  --color-amber: var(--amber);
+  --color-scrim: var(--scrim);
   --font-sans: var(--font-grotesk), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-plex), ui-monospace, monospace;
 }
@@ -155,7 +172,9 @@ button:disabled {
     radial-gradient(circle, var(--bg) 0 1.6%, var(--accent) 1.7% 17%, transparent 17.3%),
     repeating-radial-gradient(circle, transparent 0 1.1px, rgb(255 255 255 / 0.045) 1.4px 1.9px),
     conic-gradient(from 20deg, #1c1b1a, #050505 22%, #2a2927 27%, #050505 33%, #161514 50%, #050505 72%, #2a2927 77%, #050505 83%, #1c1b1a);
-  box-shadow: 0 2px 10px -2px rgb(0 0 0 / 0.45);
+  box-shadow:
+    0 0 0 1px var(--wax-ring),
+    0 2px 10px -2px rgb(0 0 0 / 0.45);
   transition: transform 0.55s cubic-bezier(0.2, 0.75, 0.2, 1);
 }
 

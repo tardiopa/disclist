@@ -47,7 +47,7 @@ export default function Landing() {
           {t("heroTitle")}
         </h1>
         <p className="mt-7 max-w-md text-lg text-muted sm:text-xl">{t("heroSub")}</p>
-        <Link href="/login?new" className="btn btn-primary mt-9 h-12 px-6 text-[15px]">
+        <Link href="/login?mode=signup" className="btn btn-primary mt-9 h-12 px-6 text-[15px]">
           {t("start")}
           <ArrowRight size={17} />
         </Link>

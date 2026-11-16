@@ -59,7 +59,7 @@ test("stats", () => {
   assert.deepEqual([s2.avg, s2.min, s2.forSale], [20.5, 10, 2]);
   const none = aggregate([], [], [], 0, 7);
   assert.deepEqual([none.avg, none.min, none.forSale], [null, null, 0]);
-  assert.deepEqual([rarity(0), rarity(49), rarity(199), rarity(999), rarity(5000)], [5, 4, 3, 2, 1]);
+  assert.deepEqual([rarity(0), rarity(24), rarity(25), rarity(149), rarity(150), rarity(5000)], [3, 3, 2, 2, 1, 1]);
 });
 
 test("collection import adds, keeps, links, never duplicates", () => {
@@ -97,7 +97,7 @@ test("filters and sort", () => {
     item({ id: "c", title: "Abbey Road", artist: "The Beatles", year: 1969, genres: ["Rock"], addedAt: 2,
       stats: { avg: 30, min: 10, forSale: 5, versions: 1, sampled: 1, updatedAt: 0 } }),
   ];
-  const base: Filters = { q: "", genre: "", decade: "", sort: "recent" };
+  const base: Filters = { q: "", genre: "", decade: "", rarity: "", sort: "recent" };
   const ids = (f: Partial<Filters>) => applyFilters(items, { ...base, ...f }).map((i) => i.id).join("");
   assert.equal(ids({}), "bca");
   assert.equal(ids({ sort: "artist" }), "acb"); // "The" ignored
@@ -105,6 +105,8 @@ test("filters and sort", () => {
   assert.equal(ids({ q: "1969" }), "c");
   assert.equal(ids({ genre: "Rock" }), "bc");
   assert.equal(ids({ decade: "1990" }), "a");
+  assert.equal(ids({ rarity: "3" }), "c");
+  assert.equal(ids({ rarity: "1" }), "");
   assert.equal(ids({ sort: "priceDesc" })[0], "c");
   assert.deepEqual(genresOf(items), ["Rock", "Electronic", "Pop"]);
   assert.deepEqual(decadesOf(items), [1990, 1970, 1960]);
@@ -126,5 +128,6 @@ test("dashboard summary", () => {
   assert.deepEqual([s.wishlistCount, s.wishlistPriced, s.wishlistCost], [2, 1, 25]);
   assert.equal(s.top?.id, "b");
   assert.deepEqual(s.genres, [{ name: "Rock", count: 2 }, { name: "Electronic", count: 1 }]);
+  assert.deepEqual(s.artists, [{ name: "A", count: 3 }]);
   assert.deepEqual(s.decades.map((d) => `${d.decade}:${d.count}`), ["1960:1", "1970:0", "1980:0", "1990:1"]);
 });

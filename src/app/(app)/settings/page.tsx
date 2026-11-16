@@ -11,6 +11,7 @@ import { auth } from "@/lib/firebase";
 import { useI18n } from "@/lib/i18n";
 import { planCollectionImport, planWishlistImport } from "@/lib/merge";
 import * as store from "@/lib/store";
+import { useTheme } from "@/lib/theme";
 import type { ListName } from "@/lib/types";
 
 function Section({ title, hint, children }: { title: string; hint?: string; children: ReactNode }) {
@@ -36,6 +37,7 @@ export default function SettingsPage() {
   const [tokenError, setTokenError] = useState(false);
   const [imports, setImports] = useState<Record<ListName, ImportState>>({ collection: { phase: "idle" }, wishlist: { phase: "idle" } });
   const [copied, setCopied] = useState<ListName | null>(null);
+  const [theme, setTheme] = useTheme();
 
   const connect = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -178,6 +180,21 @@ export default function SettingsPage() {
             {shareRow("wishlist", t("wishlist"), profile.wishlistPublic)}
           </div>
         )}
+      </Section>
+
+      <Section title={t("appearance")}>
+        <div className="inline-flex h-10 items-center rounded-full border border-line p-0.5">
+          {(["system", "light", "dark"] as const).map((m) => (
+            <button
+              key={m}
+              onClick={() => setTheme(m)}
+              aria-pressed={theme === m}
+              className={`h-full rounded-full px-4 text-[14px] transition-colors ${theme === m ? "bg-ink text-bg" : "text-muted hover:text-ink"}`}
+            >
+              {t(m === "system" ? "themeSystem" : m === "light" ? "themeLight" : "themeDark")}
+            </button>
+          ))}
+        </div>
       </Section>
 
       <Section title={t("language")}>

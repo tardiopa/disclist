@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowUpRight, Check, Plus, X } from "lucide-react";
-import { Rarity, Sleeve, Spinner } from "./bits";
+import { ArrowRight, ArrowUpRight, Check, Plus, X } from "lucide-react";
+import { Confirm, Rarity, Sleeve, Spinner } from "./bits";
 import { useOptionalLibrary } from "./library";
 import * as discogs from "@/lib/discogs";
 import { useI18n } from "@/lib/i18n";
@@ -90,7 +90,8 @@ export function Detail({ target, onClose }: { target: DetailTarget; onClose: () 
   const year = detail?.year ?? base.year;
   const genres = detail?.genres.length ? detail.genres : base.genres;
   const styles = detail?.styles.length ? detail.styles : base.styles;
-  const cover = base.cover || detail?.cover || base.thumb;
+  // Album artwork first: an edition's own image is often a buyer's photo.
+  const cover = detail?.cover || base.cover || base.thumb;
 
   const owned = lib?.collection.filter((i) => i.key === base.key) ?? [];
   const wished = lib?.wishlist.find((i) => i.key === base.key);
@@ -110,7 +111,7 @@ export function Detail({ target, onClose }: { target: DetailTarget; onClose: () 
     genres,
     styles,
     stats,
-    enriched: !!detail,
+    enriched: detail ? discogs.ALBUM_PASS : false,
     addedAt: Date.now(),
   });
 
@@ -135,7 +136,7 @@ export function Detail({ target, onClose }: { target: DetailTarget; onClose: () 
   const cells: [string, React.ReactNode][] = [
     [t("average"), <span key="a" className="num">{money(stats?.avg)}</span>],
     [t("lowest"), <span key="l" className="num">{money(stats?.min)}</span>],
-    [t("rarity"), <Rarity key="r" stats={stats} withLabel />],
+    [t("rarity"), <Rarity key="r" stats={stats} />],
     [t("editions"), <span key="e" className="num">{stats?.versions || detail?.versions ? count(detail?.versions ?? stats!.versions) : "—"}</span>],
   ];
 
@@ -181,7 +182,7 @@ export function Detail({ target, onClose }: { target: DetailTarget; onClose: () 
           </dl>
           {stats && stats.forSale > 0 && (
             <p className="label mt-3 normal-case tracking-normal">
-              ≈ {count(stats.forSale)} {t("forSale")}
+              ≈ {count(stats.forSale)} {t("forSale").toLowerCase()}
             </p>
           )}
 
@@ -189,34 +190,38 @@ export function Detail({ target, onClose }: { target: DetailTarget; onClose: () 
           <div className="mt-7 flex flex-wrap items-center gap-2">
             {lib && !list && (
               <>
-                <button className="btn btn-primary" disabled={!!busy} onClick={() => act("col", () => lib.add("collection", asNew()))}>
-                  {busy === "col" ? <Spinner /> : owned.length ? <Check size={16} /> : <Plus size={16} />}
-                  {owned.length ? t("addAnotherCopy") : t("addToCollection")}
-                </button>
-                {wished ? (
-                  <span className="btn btn-ghost pointer-events-none text-muted">
-                    <Check size={16} />
-                    {t("inWishlist")}
-                  </span>
-                ) : (
-                  !owned.length && (
-                    <button className="btn btn-ghost" disabled={!!busy} onClick={() => act("wish", () => lib.add("wishlist", asNew()))}>
-                      {busy === "wish" ? <Spinner /> : <Plus size={16} />}
-                      {t("addToWishlist")}
-                    </button>
-                  )
-                )}
                 {owned.length > 0 && (
-                  <span className="label ml-1">
+                  <span className="btn pointer-events-none bg-surface pl-3.5 text-ink">
+                    <Check size={16} className="text-accent" />
                     {t("inCollection")}
                     {owned.length > 1 ? ` ×${owned.length}` : ""}
                   </span>
+                )}
+                {wished && (
+                  <span className="btn pointer-events-none bg-surface pl-3.5 text-ink">
+                    <Check size={16} className="text-accent" />
+                    {t("inWishlist")}
+                  </span>
+                )}
+                <button
+                  className={`btn ${owned.length ? "btn-ghost" : "btn-primary"}`}
+                  disabled={!!busy}
+                  onClick={() => act("col", () => (wished && !owned.length ? lib.gotIt(wished) : lib.add("collection", asNew())))}
+                >
+                  {busy === "col" ? <Spinner /> : <Plus size={16} />}
+                  {owned.length ? t("addAnotherCopy") : t("addToCollection")}
+                </button>
+                {!wished && !owned.length && (
+                  <button className="btn btn-ghost" disabled={!!busy} onClick={() => act("wish", () => lib.add("wishlist", asNew()))}>
+                    {busy === "wish" ? <Spinner /> : <Plus size={16} />}
+                    {t("addToWishlist")}
+                  </button>
                 )}
               </>
             )}
             {lib && list === "wishlist" && entry && (
               <button className="btn btn-primary" disabled={!!busy} onClick={() => act("got", () => lib.gotIt(entry), true)}>
-                {busy === "got" ? <Spinner /> : <Check size={16} />}
+                {busy === "got" ? <Spinner /> : <ArrowRight size={16} />}
                 {t("gotIt")}
               </button>
             )}
@@ -231,13 +236,8 @@ export function Detail({ target, onClose }: { target: DetailTarget; onClose: () 
               <ArrowUpRight size={15} />
             </a>
             {lib && list && entry && (
-              <button
-                className={`btn ml-auto ${confirming ? "bg-accent text-white" : "text-muted hover:text-ink"}`}
-                disabled={!!busy}
-                onBlur={() => setConfirming(false)}
-                onClick={() => (confirming ? act("rm", () => lib.remove(list, entry.id), true) : setConfirming(true))}
-              >
-                {confirming ? `${t("remove")} ?` : t("remove")}
+              <button className="btn ml-auto text-muted hover:text-accent" disabled={!!busy} onClick={() => setConfirming(true)}>
+                {t("remove")}
               </button>
             )}
           </div>
@@ -340,6 +340,22 @@ export function Detail({ target, onClose }: { target: DetailTarget; onClose: () 
           )}
         </div>
       </div>
+      {confirming && lib && list && entry && (
+        <Confirm
+          title={t("removeTitle")}
+          text={
+            <>
+              <span className="text-ink">{title}</span> — {artistName}. {t(list === "collection" ? "removeFromCollection" : "removeFromWishlist")}
+            </>
+          }
+          action={t("remove")}
+          onCancel={() => setConfirming(false)}
+          onConfirm={() => {
+            setConfirming(false);
+            act("rm", () => lib.remove(list, entry.id), true);
+          }}
+        />
+      )}
     </div>
   );
 }
